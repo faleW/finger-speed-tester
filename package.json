@@ -38,6 +38,7 @@
 		"vite": "^6.3.5"
 	},
 	"dependencies": {
+		"@sveltejs/kit": "^2.21.1",
 		"@tailwindcss/vite": "^4.1.7",
 		"@tauri-apps/api": "^2.5.0",
 		"@types/node": "^22.15.19",

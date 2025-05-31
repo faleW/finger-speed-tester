@@ -1,5 +1,6 @@
-<script lang="ts">
-	import HelloWorld from '$lib/components/HelloWorld.svelte';
+<script>
+	import HelloWorld from "$lib/components/HelloWorld.svelte";
+
 </script>
 
 <main

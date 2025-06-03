@@ -8,11 +8,11 @@ const host = process.env.TAURI_DEV_HOST;
 
 export default defineConfig({
 	plugins: [sveltekit(), tailwindcss()],
-	// resolve: {
-	// 	alias: {
-	// 		$lib: path.resolve('./src/lib')
-	// 	}
-	// },
+	resolve: {
+		alias: {
+			$lib: path.resolve('./src/lib')
+		}
+	},
 	server: {
 		port: 1420,
 		strictPort: true,

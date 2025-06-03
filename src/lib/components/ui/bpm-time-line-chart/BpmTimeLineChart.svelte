@@ -38,16 +38,15 @@
 	let chartDom: HTMLElement;
 	let option: EChartsOption;
 	let myChart: echarts.ECharts;
-	
+
 	const dataList = () =>
-		data
-			.map(function (item) {
-				return [Number(item.time.toFixed(3)), Number(item.bpm.toFixed(3))];
-			})
-			.slice(3);
+		data.map(function (item) {
+			return [Number(item.time.toFixed(3)), Number(item.bpm.toFixed(3))];
+		});
+	// .slice(5);
 
 	onMount(() => {
-		myChart = echarts.init(chartDom);
+		myChart = echarts.init(chartDom, null, { renderer: 'canvas' });
 
 		option = {
 			animation: false,
@@ -56,12 +55,19 @@
 				show: false,
 				type: 'continuous',
 				seriesIndex: 0,
-				min: 0,
-				max: 400
+				dimension: 1,
+				min: 40,
+				max: 270,
+				inRange: {
+					color: ['#4395ff', '#66ff92', '#f8e85d', '#ff7f68', '#fe3971', '#6662dd']
+				},
+				outOfRange: {
+					color: '#1f1f46'
+				}
 			},
 			title: {
 				left: 'center',
-				text: 'Gradient along the y axis'
+				text: ''
 			},
 			tooltip: {
 				trigger: 'axis'
@@ -70,49 +76,56 @@
 				type: 'value',
 				name: 'Time',
 				axisLabel: {
-					formatter: '{value}s'
+					formatter: '{value} s'
 				},
 				splitNumber: 5
 			},
 			yAxis: {
 				type: 'value',
-				name: 'BPM'
+				name: 'Avg. BPM'
 			},
-			grid: [
-				{
-					bottom: '60%'
-				}
-			],
 			series: {
 				type: 'line',
 				showSymbol: false,
 				data: dataList(),
-				animation: false
+				animation: false,
+				smooth: true
 			},
-			dataZoom: []
+			dataZoom: [
+				{
+					type: 'inside',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				},
+				{
+					type: 'slider',
+					xAxisIndex: 0,
+					filterMode: 'none'
+				}
+			]
 		};
 		myChart.setOption(option);
+		myChart.resize();
 	});
 
 	let reloadId: number | undefined;
 	$effect(() => {
 		// console.log('Effect', reload, reloadId);
-		if (reloadId){
+		if (reloadId) {
 			clearInterval(reloadId);
 		}
 		if (reload) {
+			let data = dataList();
 			reloadId = window.setInterval(() => {
-				// console.log(data.length);
-				myChart.setOption(
-					{
-						series: {
-							data: dataList()
-						}
+				// $inspect(data.length);
+				myChart.setOption({
+					series: {
+						data: data
 					}
-				);
-			}, 100);
+				});
+			}, 50);
 		}
 	});
 </script>
 
-<div class="h-full" bind:this={chartDom}></div>
+<div class="min-h-full w-full" bind:this={chartDom}></div>

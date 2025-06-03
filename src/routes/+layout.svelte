@@ -4,7 +4,7 @@
     let { children } = $props();
 </script>
 <main
-	class="flex min-h-screen items-center justify-center bg-gradient-to-br p-4 select-none"
+	class="flex min-h-screen h-screen items-center justify-center bg-gradient-to-br p-4 select-none"
 >
 
 <!-- <TestProfileMenu /> -->

@@ -4,6 +4,7 @@
 	import { Tester } from './tester.svelte';
 	import { fade } from 'svelte/transition';
 	import BpmTimeLineChart from './ui/bpm-time-line-chart/BpmTimeLineChart.svelte';
+	import { Separator } from '$lib/components/ui/separator';
 	const tester = new Tester();
 
 	function handleKeydown(event: any) {
@@ -12,17 +13,14 @@
 	}
 </script>
 
-<div class="flex flex-row items-center">
-	<div class="wrapper flex w-full items-center justify-center">
+<div class="flex h-full flex-col items-center gap-4 border p-2 rounded-3xl min-w-[500px] max-w-[1000px] w-full">
+	<div class="wrapper flex w-full h-[400px] items-center justify-center">
 		{#if !tester.testing}
 			<div
 				class="flex flex-col gap-4"
 				in:fade={{ delay: 200, duration: 200 }}
 				out:fade={{ duration: 200 }}
 			>
-				<div class="w-full text-center text-2xl">
-					Bpm {tester.bpm}
-				</div>
 				<div class="flex flex-col gap-2 text-nowrap">
 					<div>
 						<Button
@@ -54,7 +52,7 @@
 						/>
 					</div>
 				</div>
-				<div class="flex flex-col gap-2 text-nowrap">
+				<div class="flex flex-col gap-2 text-nowrap items-center">
 					Keys
 					<div class="flex gap-1">
 						{#each tester.keys as key, index}
@@ -69,13 +67,17 @@
 							/>
 						{/each}
 						<!-- <Button
-					class="h-16 w-32 border-2 bg-gradient-to-r from-indigo-500 to-pink-500 hover:border-1"
-					onclick={() => tester.startTest()}>Go!</Button
-				> -->
+				class="h-16 w-32 border-2 bg-gradient-to-r from-indigo-500 to-pink-500 hover:border-1"
+				onclick={() => tester.startTest()}>Go!</Button
+			> -->
 					</div>
-					<div class="w-full text-center text-gray-500 underline underline-offset-4">
+					<Button
+						variant="link"
+						class="w-full text-center text-gray-500 underline underline-offset-4"
+						onclick={() => tester.initTest()}
+					>
 						Press 'Space' to start
-					</div>
+					</Button>
 				</div>
 			</div>
 		{:else}
@@ -84,16 +86,6 @@
 				in:fade={{ delay: 200, duration: 200 }}
 				out:fade={{ duration: 200 }}
 			>
-				<div>
-					Bpm: {tester.bpm}
-					<br />
-					{#if tester.rule.type === 'Clicks'}
-						{tester.hitCount} / {tester.rule.amount} clicks
-					{/if}
-					{#if tester.rule.type === 'Times'}
-						{tester.currTime} / {tester.rule.amount} seconds
-					{/if}
-				</div>
 				<div class="flex gap-2">
 					{#each tester.keys as key, index (key.key)}
 						<div
@@ -122,16 +114,39 @@
 						}
 					</style>
 				</div>
-				<div class="w-full text-center text-gray-500 underline underline-offset-4">
-					Press 'Esc' to stop
+				<div>
+					{#if tester.rule.type === 'Clicks'}
+						{tester.hitCount} / {tester.rule.amount} clicks
+					{/if}
+					{#if tester.rule.type === 'Times'}
+						{tester.currTime} / {tester.rule.amount} seconds
+					{/if}
 				</div>
+				<Button
+					variant="link"
+					class="w-full text-center text-gray-500 underline underline-offset-4"
+					onclick={() => tester.breakTest()}
+				>
+					Press 'Esc' to stop
+				</Button>
 			</div>
 		{/if}
 	</div>
-	<div class="w-[1000px] h-[500px]">
-		{#key tester.bpmTimes}
+	<Separator />
+	<div class="flex flex-col w-full overflow-hidden h-full min-h-[350px]">
+		<div class="w-full text-center text-xl flex flex-row justify-around">
+			<div>
+				Average Bpm {tester.bpm}
+			</div>
+			<div>
+				{tester.hitCount} taps in {tester.currTime} seconds
+			</div>
+		</div>
+		<div class="flex-1 w-full">
+			{#key tester.bpmTimes}
 			<BpmTimeLineChart data={[...tester.bpmTimes]} reload={tester.isRunning} />
-		{/key}
+			{/key}
+		</div>
 	</div>
 </div>
 <svelte:window onkeydown={handleKeydown} />

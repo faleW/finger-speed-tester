@@ -30,7 +30,7 @@ export class Tester {
     records: HitRecord[] = $state([]);
     rule: TestRule;
     bpm: string = $state("0");
-    currTime: string = $state("0");
+    currTime: string = $state("0.00");
     bpmTimes: BpmTime[] = $state([]);
     private startTime: number = 0;
     private timesTimerId?: number;
@@ -46,7 +46,7 @@ export class Tester {
         this.keys.forEach(input => input.count = 0)
         this.testing = true;
         this.hitCount = 0;
-        this.currTime = "0";
+        this.currTime = "0.00";
         this.records = [];
     }
 
@@ -58,6 +58,11 @@ export class Tester {
         if (this.rule.type === "Times") 
             this.timesTimerId = window.setTimeout(() => this.finishTest(), this.rule.amount * 1000);
 
+        this.startGameInterval();
+    }
+
+    startGameInterval(){
+        if(this.gameTimerId) window.clearInterval(this.gameTimerId);
         this.gameTimerId = window.setInterval(() => this.updateGameState(), 200)
     }
 
@@ -80,8 +85,8 @@ export class Tester {
         if (!this.isRunning) return;
         if (this.rule.type === "Times")
             clearTimeout(this.timesTimerId);
-        clearInterval(this.gameTimerId);
-        console.log("data", this.bpmTimes)
+        window.clearInterval(this.gameTimerId);
+        // console.log("data", this.bpmTimes)
         this.isRunning = false;
         this.testing = false;
         this.updateGameState();
@@ -93,7 +98,7 @@ export class Tester {
 
             if (this.rule.type === "Times")
                 clearTimeout(this.timesTimerId);
-            clearInterval(this.gameTimerId);
+            window.clearInterval(this.gameTimerId);
             this.isRunning = false;
         }
     }
@@ -138,7 +143,8 @@ export class Tester {
                 bpm: (elapsedSeconds == 0) ? 0 : this.hitCount / elapsedSeconds * 60 / 4
             });
             if (this.rule.type === "Clicks" && this.hitCount === this.rule.amount) this.finishTest();
-            this.updateGameState()
+            
+            this.updateGameState();
         }
     }
 }

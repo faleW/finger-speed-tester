@@ -5,17 +5,21 @@
 	import { fade } from 'svelte/transition';
 	import BpmTimeLineChart from './ui/bpm-time-line-chart/BpmTimeLineChart.svelte';
 	import { Separator } from '$lib/components/ui/separator';
-	const tester = new Tester();
+	import type { SpeedTester } from '$lib/model/speed-tester';
+
+	let { tester } : {tester : SpeedTester | undefined} = $props();
+
+	const testerState = new Tester(tester);
 
 	function handleKeydown(event: any) {
 		if (event.repeat) return;
-		tester.handleKeyDown(event.key);
+		testerState.handleKeyDown(event.key);
 	}
 </script>
 
-<div class="flex h-full flex-col items-center gap-4 border p-2 rounded-3xl min-w-[500px] max-w-[1000px] w-full">
-	<div class="wrapper flex w-full h-[400px] items-center justify-center">
-		{#if !tester.testing}
+<div class="flex flex-row items-center gap-4 p-2 min-w-[500px] max-w-[1000px] w-full h-full">
+	<div class="wrapper flex w-full h-[450px] items-center justify-center">
+		{#if !testerState.testing}
 			<div
 				class="flex flex-col gap-4"
 				in:fade={{ delay: 200, duration: 200 }}
@@ -24,20 +28,20 @@
 				<div class="flex flex-col gap-2 text-nowrap">
 					<div>
 						<Button
-							aria-checked={tester.rule.type == 'Times'}
+							aria-checked={testerState.rule.type == 'Times'}
 							variant="ghost"
 							class="underline-offset-4 aria-checked:underline"
 							onclick={() => {
-								tester.rule.type = 'Times';
+								testerState.rule.type = 'Times';
 							}}>Times (Seconds)</Button
 						>
 						/
 						<Button
-							aria-checked={tester.rule.type == 'Clicks'}
+							aria-checked={testerState.rule.type == 'Clicks'}
 							variant="ghost"
 							class="underline-offset-4  aria-checked:underline"
 							onclick={() => {
-								tester.rule.type = 'Clicks';
+								testerState.rule.type = 'Clicks';
 							}}>Clicks</Button
 						>
 					</div>
@@ -48,22 +52,22 @@
 							id="key1"
 							type="number"
 							size={1}
-							bind:value={tester.rule.amount}
+							bind:value={testerState.rule.amount}
 						/>
 					</div>
 				</div>
 				<div class="flex flex-col gap-2 text-nowrap items-center">
 					Keys
 					<div class="flex gap-1">
-						{#each tester.keys as key, index}
+						{#each testerState.keys as key, index}
 							<Input
 								autocomplete="off"
 								autocorrect="off"
 								id={'key-' + index}
 								type="text"
 								class="h-16 w-16 text-center text-4xl md:text-4xl"
-								bind:value={tester.keys[index].key}
-								oninput={(e) => tester.updateKey(index, e)}
+								bind:value={testerState.keys[index].key}
+								oninput={(e) => testerState.updateKey(index, e)}
 							/>
 						{/each}
 						<!-- <Button
@@ -74,7 +78,7 @@
 					<Button
 						variant="link"
 						class="w-full text-center text-gray-500 underline underline-offset-4"
-						onclick={() => tester.initTest()}
+						onclick={() => testerState.initTest()}
 					>
 						Press 'Space' to start
 					</Button>
@@ -87,11 +91,11 @@
 				out:fade={{ duration: 200 }}
 			>
 				<div class="flex gap-2">
-					{#each tester.keys as key, index (key.key)}
+					{#each testerState.keys as key, index (key.key)}
 						<div
 							class="flex h-18 w-18 flex-col items-center overflow-hidden rounded-2xl border-2 text-center"
 						>
-							{#key tester.keys[index].count}
+							{#key testerState.keys[index].count}
 								<div class="flash-once m-0 flex w-full flex-1 items-center justify-center text-3xl">
 									{key.key}
 								</div>
@@ -115,36 +119,36 @@
 					</style>
 				</div>
 				<div>
-					{#if tester.rule.type === 'Clicks'}
-						{tester.hitCount} / {tester.rule.amount} clicks
+					{#if testerState.rule.type === 'Clicks'}
+						{testerState.hitCount} / {testerState.rule.amount} clicks
 					{/if}
-					{#if tester.rule.type === 'Times'}
-						{tester.currTime} / {tester.rule.amount} seconds
+					{#if testerState.rule.type === 'Times'}
+						{testerState.currTime} / {testerState.rule.amount} seconds
 					{/if}
 				</div>
 				<Button
 					variant="link"
 					class="w-full text-center text-gray-500 underline underline-offset-4"
-					onclick={() => tester.breakTest()}
+					onclick={() => testerState.breakTest()}
 				>
 					Press 'Esc' to stop
 				</Button>
 			</div>
 		{/if}
 	</div>
-	<Separator />
-	<div class="flex flex-col w-full overflow-hidden h-full min-h-[350px]">
+	<!-- <Separator variant="vertical" /> -->
+	<div class="flex flex-col w-full overflow-hidden h-full">
 		<div class="w-full text-center text-xl flex flex-row justify-around">
 			<div>
-				Average Bpm {tester.bpm}
+				Average Bpm {testerState.bpm}
 			</div>
 			<div>
-				{tester.hitCount} taps in {tester.currTime} seconds
+				{testerState.hitCount} taps in {testerState.currTime} seconds
 			</div>
 		</div>
 		<div class="flex-1 w-full">
-			{#key tester.bpmTimes}
-			<BpmTimeLineChart data={[...tester.bpmTimes]} reload={tester.isRunning} />
+			{#key testerState.bpmTimes}
+			<BpmTimeLineChart data={[...testerState.bpmTimes]} reload={testerState.isRunning} />
 			{/key}
 		</div>
 	</div>

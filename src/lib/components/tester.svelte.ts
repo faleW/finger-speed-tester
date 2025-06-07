@@ -1,6 +1,8 @@
-import { Previous } from "runed";
+import { Previous, watch } from "runed";
 import { linear } from "svelte/easing";
 import type { BpmTime } from "./ui/bpm-time-line-chart";
+import type { HitType, SpeedTester } from "$lib/model/speed-tester";
+import { db } from "$lib/model/db";
 
 export class ClickableKeyInput {
     key: string = $state("");
@@ -12,8 +14,13 @@ export class ClickableKeyInput {
 }
 
 export class TestRule {
-    type: "Times" | "Clicks" = $state("Times");
+    type: HitType = $state("Times");
     amount: number = $state(10);
+
+    constructor(type: HitType, amount: number) {
+        this.type = type;
+        this.amount = amount;
+    }
 }
 
 export type HitRecord = {
@@ -22,7 +29,11 @@ export type HitRecord = {
     bpm: number;
 };
 
+type ReactiveSaveType = "Rule" | "Keys";
+
 export class Tester {
+    id: number;
+    name: string;
     testing: boolean = $state(false);
     isRunning = $state(false);
     hitCount: number = $state(0);
@@ -35,11 +46,34 @@ export class Tester {
     private startTime: number = 0;
     private timesTimerId?: number;
     private gameTimerId?: number;
+    constructor(speedTester?: SpeedTester) {
+        this.id = speedTester?.id ?? 0;
+        this.name = speedTester?.name ?? "Default";
+        speedTester?.keys.forEach(element => {
+            this.keys.push(new ClickableKeyInput(element));
+        });
+        if (!speedTester) {
+            this.keys.push(new ClickableKeyInput("Z"));
+            this.keys.push(new ClickableKeyInput("C"));
+        }
+        this.rule = new TestRule(speedTester?.type ?? "Times", speedTester?.amount ?? 10);
 
-    constructor() {
-        this.keys.push(new ClickableKeyInput("Z"));
-        this.keys.push(new ClickableKeyInput("C"));
-        this.rule = new TestRule();
+        watch(() => this.rule.type, () => {
+            db.speedTester.update(
+                this.id,
+                {
+                    type: this.rule.type
+                });
+        });
+
+        watch(() => this.rule.amount, () => {
+            db.speedTester.update(
+                this.id,
+                {
+                    amount: this.rule.amount
+                });
+        });
+
     }
 
     initTest() {
@@ -55,14 +89,14 @@ export class Tester {
         this.bpmTimes = [];
         this.isRunning = true;
         this.startTime = Date.now();
-        if (this.rule.type === "Times") 
+        if (this.rule.type === "Times")
             this.timesTimerId = window.setTimeout(() => this.finishTest(), this.rule.amount * 1000);
 
         this.startGameInterval();
     }
 
-    startGameInterval(){
-        if(this.gameTimerId) window.clearInterval(this.gameTimerId);
+    startGameInterval() {
+        if (this.gameTimerId) window.clearInterval(this.gameTimerId);
         this.gameTimerId = window.setInterval(() => this.updateGameState(), 200)
     }
 
@@ -83,18 +117,41 @@ export class Tester {
 
     finishTest() {
         if (!this.isRunning) return;
-        if (this.rule.type === "Times")
+        if (this.rule.type === "Times"){
             clearTimeout(this.timesTimerId);
+            this.updateGameState();
+        }
         window.clearInterval(this.gameTimerId);
         // console.log("data", this.bpmTimes)
         this.isRunning = false;
         this.testing = false;
-        this.updateGameState();
+        this.saveRecordToDb();
+    }
+    saveRecordToDb() {
+        let now = new Date();
+        // now.setDate(now.getDate() - 3)
+        db.speedTesterRecord.put({
+            testerId: this.id,
+            createdTime: now,
+            keys: this.keys.map((value) => value.key),
+            type: this.rule.type,
+            amount: this.rule.amount,
+            periodTime: Number(this.currTime),
+            numberOfHits: this.hitCount,
+            bpm: Number(this.bpm),
+            unstableRate: 0
+        });
+    }
+
+    saveSettingToDb(type: ReactiveSaveType) {
+        switch (type) {
+
+        }
     }
 
     breakTest() {
         this.testing = false;
-        if(this.isRunning){
+        if (this.isRunning) {
 
             if (this.rule.type === "Times")
                 clearTimeout(this.timesTimerId);
@@ -113,6 +170,12 @@ export class Tester {
             this.keys[index].key = this.keys[index].previous.current ?? "";
         else
             this.keys[index].key = newKey;
+
+        db.speedTester.update(
+            this.id,
+            {
+                keys: this.keys.map((value) => value.key)
+            });
     }
 
     handleKeyDown(key: string) {
@@ -143,7 +206,7 @@ export class Tester {
                 bpm: (elapsedSeconds == 0) ? 0 : this.hitCount / elapsedSeconds * 60 / 4
             });
             if (this.rule.type === "Clicks" && this.hitCount === this.rule.amount) this.finishTest();
-            
+
             this.updateGameState();
         }
     }

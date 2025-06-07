@@ -8,7 +8,10 @@
 		GridComponent,
 		type GridComponentOption,
 		VisualMapComponent,
-		type VisualMapComponentOption
+		type VisualMapComponentOption,
+
+		DataZoomComponent
+
 	} from 'echarts/components';
 	import { LineChart, type LineSeriesOption } from 'echarts/charts';
 	import { UniversalTransition } from 'echarts/features';
@@ -25,7 +28,8 @@
 		VisualMapComponent,
 		LineChart,
 		CanvasRenderer,
-		UniversalTransition
+		UniversalTransition,
+		DataZoomComponent
 	]);
 
 	type EChartsOption = echarts.ComposeOption<
@@ -42,9 +46,11 @@
 	const dataList = () =>
 		data.map(function (item) {
 			return [Number(item.time.toFixed(3)), Number(item.bpm.toFixed(3))];
-		});
-	// .slice(5);
-
+		})
+	.slice(5);
+	const resize = () => {
+		myChart.resize();
+	};
 	onMount(() => {
 		myChart = echarts.init(chartDom, null, { renderer: 'canvas' });
 
@@ -91,18 +97,18 @@
 				animation: false,
 				smooth: true
 			},
-			dataZoom: [
-				{
-					type: 'inside',
-					xAxisIndex: 0,
-					filterMode: 'none'
-				},
-				{
-					type: 'slider',
-					xAxisIndex: 0,
-					filterMode: 'none'
-				}
-			]
+			// dataZoom: [
+			// 	{
+			// 		type: 'inside',
+			// 		xAxisIndex: 0,
+			// 		filterMode: 'none'
+			// 	},
+			// 	{
+			// 		type: 'slider',
+			// 		xAxisIndex: 0,
+			// 		filterMode: 'none'
+			// 	}
+			// ]
 		};
 		myChart.setOption(option);
 		myChart.resize();
@@ -129,3 +135,6 @@
 </script>
 
 <div class="min-h-full w-full" bind:this={chartDom}></div>
+
+
+<svelte:window onresize={resize} />

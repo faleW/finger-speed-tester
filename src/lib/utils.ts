@@ -21,3 +21,8 @@ export function convertUtcToLocalDateString(utcDate: Date): string {
 	const day = String(localDate.getDate()).padStart(2, '0');
 	return `${year}-${month}-${day}`;
 }
+
+export function toMidnight(dateStr: string) : Date {
+  const parts = dateStr.split("-").map(Number); // [2025, 6, 7]
+  return new Date(parts[0], parts[1] - 1, parts[2]); // Month is 0-based
+}

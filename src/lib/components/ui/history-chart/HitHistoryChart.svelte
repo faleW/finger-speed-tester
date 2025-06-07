@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { Button } from '../button';
+	import Separator from '../separator/separator.svelte';
 	import DayHitHistoryChart from './DayHitHistoryChart.svelte';
 	import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
 	let { id }: { id: number } = $props();
 	let chartType: 'day' | 'time' = $state('time');
 </script>
 
-<div class="flex h-full min-h-full w-full flex-row">
-	<div class="flex flex-col">
+<div class="flex h-full min-h-full w-full flex-col p-2">
+	<div class="flex flex-row items-center">
+		<span class="text-md">Type</span>
+		<Separator class="mx-2" orientation="vertical"/>
 		<Button
 			aria-checked={chartType == 'day'}
 			variant="ghost"
@@ -25,9 +28,11 @@
 			}}>Time</Button
 		>
 	</div>
-	{#if chartType == 'day'}
+	<div class="flex-1 h-full">
+		{#if chartType == 'day'}
 		<DayHitHistoryChart {id}/>
-	{:else}
+		{:else}
 		<TimeHitHistoryChart {id}/>
-	{/if}
+		{/if}
+	</div>
 </div>

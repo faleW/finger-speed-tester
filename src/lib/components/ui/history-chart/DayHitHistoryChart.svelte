@@ -9,7 +9,9 @@
 		type GridComponentOption,
 		VisualMapComponent,
 		type VisualMapComponentOption,
-		DataZoomComponent
+		DataZoomComponent,
+		ToolboxComponent,
+		LegendComponent
 	} from 'echarts/components';
 	import { LineChart, type LineSeriesOption } from 'echarts/charts';
 	import { UniversalTransition } from 'echarts/features';
@@ -18,7 +20,7 @@
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/model/db';
 	import { currentMonitor } from '@tauri-apps/api/window';
-	import { convertUtcToLocalDateString } from '$lib/utils';
+	import { convertUtcToLocalDateString, toMidnight } from '$lib/utils';
 
 	echarts.use([
 		TitleComponent,
@@ -28,7 +30,9 @@
 		LineChart,
 		CanvasRenderer,
 		UniversalTransition,
-		DataZoomComponent
+		DataZoomComponent,
+		ToolboxComponent,
+		LegendComponent
 	]);
 
 	type EChartsOption = echarts.ComposeOption<
@@ -63,11 +67,12 @@
 			let dataObject: Map<string, DataType> = new Map<string, DataType>();
 			result.forEach(function (item) {
 				const date = convertUtcToLocalDateString(item.createdTime);
+				console.log(date);
 				const curr = dataObject.get(date);
 				dataObject.set(date, {
 					date: date,
 					minBpm: Math.min(item.bpm, curr?.minBpm ?? item.bpm),
-					maxBpm: Math.max(item.bpm, curr?.minBpm ?? item.bpm),
+					maxBpm: Math.max(item.bpm, curr?.maxBpm ?? item.bpm),
 					averageBpm: curr
 						? (curr.averageBpm * curr.count + item.bpm) / (curr.count + 1)
 						: item.bpm,
@@ -76,30 +81,44 @@
 			});
 
 			data = Array.from(dataObject.values());
-			const minBpmSeries = data.map((d) => [new Date(d.date).getTime(), d.minBpm]);
-			const maxBpmSeries = data.map((d) => [new Date(d.date).getTime(), d.maxBpm]);
-			const avgBpmSeries = data.map((d) => [new Date(d.date).getTime(), d.averageBpm]);
+			type BpmSeriesType = (Date| number)[][];
+			const minBpmSeries: BpmSeriesType = [];
+			const maxBpmSeries: BpmSeriesType = [];
+			const avgBpmSeries: BpmSeriesType = [];
+			const countSeries: BpmSeriesType = [];
+
+			data.forEach((item) => {
+				// const date = toUtcMidnight(item.date).getTime();
+				
+				const date = toMidnight(item.date).getTime();
+				// const parts = item.date.split('-').map(Number); // [2025, 6, 7]
+				// const date = Date.UTC(parts[0], parts[1] - 1, parts[2]); // Month is 0-based
+				minBpmSeries.push([date, item.minBpm]);
+				maxBpmSeries.push([date, item.maxBpm]);
+				avgBpmSeries.push([date, item.averageBpm]);
+				countSeries.push([date, item.count]);
+			});
 			myChart.setOption({
-				visualMap: [
-					visualMapData,
-					// { ...visualMapData, seriesIndex: 1 },
-					// { ...visualMapData, seriesIndex: 2 }
-				],
 				series: [
 					{
-						name: 'Min BPM',
+						name: 'Min',
 						type: 'line',
 						data: minBpmSeries
 					},
 					{
-						name: 'Max BPM',
+						name: 'Max',
 						type: 'line',
 						data: maxBpmSeries
 					},
 					{
-						name: 'Average BPM',
+						name: 'Average',
 						type: 'line',
 						data: avgBpmSeries
+					},
+					{
+						name: 'Play Count',
+						type: 'line',
+						data: countSeries
 					}
 				]
 			});
@@ -120,10 +139,9 @@
 		}
 	};
 	onMount(() => {
-		myChart = echarts.init(chartDom, null, { renderer: 'canvas' });
+		myChart = echarts.init(chartDom);
 		let option = {
-			// Make gradient line here
-			visualMap: [],
+			visualMap: visualMapData,
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {
@@ -144,7 +162,17 @@
 				}
 			},
 			legend: {
-				data: ['Min BPM', 'Max BPM', 'Average BPM']
+				selected: {
+					Min: false,
+					Max: true,
+					Average: false,
+					'Play Count': false
+				}
+			},
+			toolbox: {
+				feature: {
+					saveAsImage: {}
+				}
 			},
 			xAxis: {
 				type: 'time',
@@ -158,7 +186,28 @@
 				type: 'value',
 				name: 'BPM'
 			},
-			series: [],
+			series: [
+				{
+					name: 'Min',
+					type: 'line',
+					smooth: true
+				},
+				{
+					name: 'Max',
+					type: 'line',
+					smooth: true
+				},
+				{
+					name: 'Average',
+					type: 'line',
+					smooth: true
+				},
+				{
+					name: 'Play Count',
+					type: 'line',
+					smooth: true
+				}
+			],
 			dataZoom: [
 				{
 					type: 'inside',

@@ -83,7 +83,6 @@
 			},
 			title: {
 				left: 'center',
-				text: 'History'
 			},
 			tooltip: {
 				trigger: 'axis',

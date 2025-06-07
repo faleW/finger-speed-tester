@@ -122,6 +122,7 @@
 					}
 				]
 			});
+			resize();
 		},
 		error: (error) => console.error(error)
 	});

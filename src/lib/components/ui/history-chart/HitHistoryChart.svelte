@@ -4,11 +4,11 @@
 	import DayHitHistoryChart from './DayHitHistoryChart.svelte';
 	import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
 	let { id }: { id: number } = $props();
-	let chartType: 'day' | 'time' = $state('time');
+	let chartType: 'day' | 'time' = $state('day');
 </script>
 
-<div class="flex h-full min-h-full w-full flex-col p-2">
-	<div class="flex flex-row items-center">
+<div class="flex flex-1 h-full min-h-full flex-col p-2">
+	<div class="flex flex-row w-fit items-center border rounded-2xl border-gray-400 pl-4 overflow-hidden">
 		<span class="text-md">Type</span>
 		<Separator class="mx-2" orientation="vertical"/>
 		<Button
@@ -28,7 +28,7 @@
 			}}>Time</Button
 		>
 	</div>
-	<div class="flex-1 h-full">
+	<div class="flex-1 h-full w-full">
 		{#if chartType == 'day'}
 		<DayHitHistoryChart {id}/>
 		{:else}

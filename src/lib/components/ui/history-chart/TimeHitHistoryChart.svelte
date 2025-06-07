@@ -59,6 +59,7 @@
 					data: data
 				}
 			});
+			resize();
 		},
 		error: (error) => console.error(error)
 	});
@@ -149,6 +150,7 @@
 			]
 		};
 		myChart.setOption(option);
+		myChart.resize();
 	});
 
 	onDestroy(() => {

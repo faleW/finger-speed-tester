@@ -77,7 +77,7 @@
 					</div>
 					<Button
 						variant="link"
-						class="w-full text-center text-gray-500 underline underline-offset-4"
+						class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300"
 						onclick={() => testerState.initTest()}
 					>
 						Press 'Space' to start
@@ -128,7 +128,7 @@
 				</div>
 				<Button
 					variant="link"
-					class="w-full text-center text-gray-500 underline underline-offset-4"
+					class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300"
 					onclick={() => testerState.breakTest()}
 				>
 					Press 'Esc' to stop

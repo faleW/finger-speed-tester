@@ -2,7 +2,7 @@
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Tester } from './tester.svelte';
-	import { fade } from 'svelte/transition';
+	import { fade, scale } from 'svelte/transition';
 	import BpmTimeLineChart from './ui/bpm-time-line-chart/BpmTimeLineChart.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import type { SpeedTester } from '$lib/model/speed-tester';
@@ -97,7 +97,7 @@
 						>
 							{#key testerState.keys[index].count}
 								<div class="flash-once m-0 flex w-full flex-1 items-center justify-center text-3xl">
-									{key.key}
+									<div class="scale-once">{key.key}</div>
 								</div>
 							{/key}
 							<div class="m-0 h-6 w-full border-t-2 p-0">{key.count}</div>
@@ -105,16 +105,28 @@
 					{/each}
 					<style>
 						@keyframes flash {
-							0% {
+							from {
 								background-color: #d7d6d6;
 							}
-							100% {
+							to {
 								background-color: transparent;
+							}
+						}
+						@keyframes scale {
+							from {
+								transform: scale(0.7)
+							}
+							to {
+								transform: scale(1)
 							}
 						}
 
 						.flash-once {
 							animation: flash 0.3s ease;
+						}
+
+						.scale-once {
+							animation: scale 0.3s ease;
 						}
 					</style>
 				</div>

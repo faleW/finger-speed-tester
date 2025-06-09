@@ -21,6 +21,7 @@
 	import { db } from '$lib/model/db';
 	import { currentMonitor } from '@tauri-apps/api/window';
 	import { convertUtcToLocalDateString, toMidnight } from '$lib/utils';
+	import { mode } from 'mode-watcher';
 
 	echarts.use([
 		TitleComponent,

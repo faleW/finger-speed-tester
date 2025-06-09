@@ -77,13 +77,15 @@
 						<Tooltip.Root>
 							<Tooltip.Trigger>
 								<div
-									class="mb-1 flex flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs hover:border-gray-300"
+									class="mb-1 flex flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs hover:border-gray-300
+                                    hover:**:data-delete:block h-6"
 								>
 									{toLocalTimeOnly(record.createdTime)} BPM: {record.bpm}
 									<Button
+                                        data-delete
 										size="icon"
 										variant="ghost"
-										class="h-5 w-5 p-0 text-red-500 hover:text-red-600"
+										class="h-5 w-5 p-0 text-red-500 hover:text-red-600 hidden"
 										onclick={() => {
 											openDelete = true;
 											recordForDelete = record;

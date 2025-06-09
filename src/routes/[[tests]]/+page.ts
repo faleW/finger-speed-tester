@@ -25,11 +25,11 @@ export const load: PageLoad = async ({ params }) => {
             })
         }
     }
-
+    
     return {
         tester: await db.speedTester
             .where('id')
-            .equals(0)
+            .equals(id)
             .first()
     }
 };

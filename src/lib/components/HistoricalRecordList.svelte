@@ -66,8 +66,8 @@
 	<p>Test at: {record.createdTime.toLocaleString()}</p>
 {/snippet}
 <div class="m-2 mt-4 h-full w-[180px] overflow-y-hidden">
-	<span class=" text-base font-semibold">History</span>
-	<Separator />
+	<!-- <span class=" text-base font-semibold">History</span>
+	<Separator /> -->
 	<ScrollArea class="h-full overflow-auto pr-2 pb-4">
 		<div class="flex-reverse flex flex-col ">
 			{#each Object.entries(data) as [date, records] (date)}

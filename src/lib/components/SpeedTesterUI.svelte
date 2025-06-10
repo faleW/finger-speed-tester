@@ -6,6 +6,7 @@
 	import BpmTimeLineChart from './ui/bpm-time-line-chart/BpmTimeLineChart.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import type { SpeedTester } from '$lib/model/speed-tester';
+	import { mode } from 'mode-watcher';
 
 	let { tester } : {tester : SpeedTester | undefined} = $props();
 
@@ -159,8 +160,10 @@
 			</div>
 		</div>
 		<div class="flex-1 w-full">
+			{#key $mode}
 			{#key testerState.bpmTimes}
-			<BpmTimeLineChart data={[...testerState.bpmTimes]} reload={testerState.isRunning} />
+			<BpmTimeLineChart data={[...testerState.bpmTimes]} reload={testerState.isRunning} mode={$mode}/>
+			{/key}
 			{/key}
 		</div>
 	</div>

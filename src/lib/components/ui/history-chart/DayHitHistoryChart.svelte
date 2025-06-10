@@ -19,9 +19,8 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/model/db';
-	import { currentMonitor } from '@tauri-apps/api/window';
 	import { convertUtcToLocalDateString, toMidnight } from '$lib/utils';
-	import { mode } from 'mode-watcher';
+	import { BPMColorSchema, type ThemeMode } from '$lib/constants/Color';
 
 	echarts.use([
 		TitleComponent,
@@ -57,7 +56,7 @@
 		averageBpm: number;
 		count: number;
 	};
-	let { id }: { id: number } = $props();
+	let { id, mode }: { id: number; mode: ThemeMode } = $props();
 	let data: DataType[];
 
 	let records = liveQuery(() =>
@@ -68,7 +67,6 @@
 			let dataObject: Map<string, DataType> = new Map<string, DataType>();
 			result.forEach(function (item) {
 				const date = convertUtcToLocalDateString(item.createdTime);
-				console.log(date);
 				const curr = dataObject.get(date);
 				dataObject.set(date, {
 					date: date,
@@ -82,7 +80,7 @@
 			});
 
 			data = Array.from(dataObject.values());
-			type BpmSeriesType = (Date| number)[][];
+			type BpmSeriesType = (Date | number)[][];
 			const minBpmSeries: BpmSeriesType = [];
 			const maxBpmSeries: BpmSeriesType = [];
 			const avgBpmSeries: BpmSeriesType = [];
@@ -90,7 +88,7 @@
 
 			data.forEach((item) => {
 				// const date = toUtcMidnight(item.date).getTime();
-				
+
 				const date = toMidnight(item.date).getTime();
 				// const parts = item.date.split('-').map(Number); // [2025, 6, 7]
 				// const date = Date.UTC(parts[0], parts[1] - 1, parts[2]); // Month is 0-based
@@ -128,22 +126,25 @@
 		error: (error) => console.error(error)
 	});
 	const visualMapData = {
-		show: false,
+		top: 70,
+		right: 10,
+		show: true,
 		type: 'continuous',
 		dimension: 1,
 		min: 40,
-		max: 270,
+		max: 300,
 		inRange: {
-			color: ['#4395ff', '#66ff92', '#f8e85d', '#ff7f68', '#fe3971', '#6662dd']
+			color: BPMColorSchema
 		},
 		outOfRange: {
 			color: '#1f1f46'
 		}
 	};
 	onMount(() => {
-		myChart = echarts.init(chartDom);
+		myChart = echarts.init(chartDom, mode ?? 'light');
 		let option = {
 			visualMap: visualMapData,
+			backgroundColor: 'transparent',
 			tooltip: {
 				trigger: 'axis',
 				axisPointer: {

@@ -17,6 +17,7 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/model/db';
+	import type { ThemeMode } from '$lib/constants/Color';
 
 	echarts.use([
 		TitleComponent,
@@ -43,7 +44,7 @@
 		myChart.resize();
 	};
 
-	let { id }: { id: number } = $props();
+	let { id, mode }: { id: number; mode: ThemeMode } = $props();
 	let data: (Date | number)[][] = [];
 
 	let records = liveQuery(() =>
@@ -65,16 +66,19 @@
 	});
 
 	onMount(() => {
-		myChart = echarts.init(chartDom, null, { renderer: 'canvas' });
+		myChart = echarts.init(chartDom, mode, { renderer: 'canvas' });
 		let option = {
+			backgroundColor: 'transparent',
 			// Make gradient line here
 			visualMap: {
-				show: false,
+				top: 70,
+				right: 10,
+				show: true,
 				type: 'continuous',
 				seriesIndex: 0,
 				dimension: 1,
 				min: 40,
-				max: 270,
+				max: 300,
 				inRange: {
 					color: ['#4395ff', '#66ff92', '#f8e85d', '#ff7f68', '#fe3971', '#6662dd']
 				},
@@ -83,7 +87,7 @@
 				}
 			},
 			title: {
-				left: 'center',
+				left: 'center'
 			},
 			tooltip: {
 				trigger: 'axis',
@@ -98,9 +102,10 @@
 					axisLabel: {
 						formatter: (value: string | number | Date) => {
 							const date = new Date(value);
-							return date.toLocaleDateString([],{
-                                hour: '2-digit', minute: '2-digit'
-                            }); // Bottom: Date
+							return date.toLocaleDateString([], {
+								hour: '2-digit',
+								minute: '2-digit'
+							}); // Bottom: Date
 						}
 					}
 				},

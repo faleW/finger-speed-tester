@@ -5,9 +5,10 @@
 	import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
 	let { id }: { id: number } = $props();
 	let chartType: 'day' | 'time' = $state('day');
+	import { mode } from 'mode-watcher';
 </script>
 
-<div class="flex flex-1 h-full min-h-full flex-col p-2">
+{#snippet chartTag()}
 	<div class="flex flex-row w-fit items-center border rounded-2xl border-gray-400 pl-4 overflow-hidden">
 		<span class="text-md">Type</span>
 		<Separator class="mx-2" orientation="vertical"/>
@@ -28,11 +29,16 @@
 			}}>Time</Button
 		>
 	</div>
+{/snippet}
+
+<div class="flex flex-1 h-full min-h-full flex-col p-2">
 	<div class="flex-1 h-full w-full">
+		{#key $mode}
 		{#if chartType == 'day'}
-		<DayHitHistoryChart {id}/>
+		<DayHitHistoryChart {id} mode={$mode}/>
 		{:else}
-		<TimeHitHistoryChart {id}/>
+		<TimeHitHistoryChart {id} mode={$mode}/>
 		{/if}
+		{/key}
 	</div>
 </div>

@@ -9,17 +9,16 @@
 		type GridComponentOption,
 		VisualMapComponent,
 		type VisualMapComponentOption,
-
 		DataZoomComponent
-
 	} from 'echarts/components';
 	import { LineChart, type LineSeriesOption } from 'echarts/charts';
 	import { UniversalTransition } from 'echarts/features';
 	import { CanvasRenderer } from 'echarts/renderers';
 	import { onMount } from 'svelte';
 	import type { BpmTime } from '.';
+	import { BPMColorSchema, type ThemeMode } from '$lib/constants/Color';
 
-	let { data, reload }: { data: BpmTime[]; reload: boolean } = $props();
+	let { data, reload, mode }: { data: BpmTime[]; reload: boolean ; mode: ThemeMode } = $props();
 
 	echarts.use([
 		TitleComponent,
@@ -44,28 +43,33 @@
 	let myChart: echarts.ECharts;
 
 	const dataList = () =>
-		data.map(function (item) {
-			return [Number(item.time.toFixed(3)), Number(item.bpm.toFixed(3))];
-		})
-	.slice(5);
+		data
+			.map(function (item) {
+				return [Number(item.time.toFixed(3)), Number(item.bpm.toFixed(3))];
+			})
+			.slice(5);
 	const resize = () => {
 		myChart.resize();
 	};
 	onMount(() => {
-		myChart = echarts.init(chartDom, null, { renderer: 'canvas' });
+		console.log(mode)
+		myChart = echarts.init(chartDom, mode, { renderer: 'canvas' });
 
 		option = {
+			backgroundColor: 'transparent',
 			animation: false,
 			// Make gradient line here
 			visualMap: {
-				show: false,
+				top: 50,
+				right: 10,
+				show: true,
 				type: 'continuous',
 				seriesIndex: 0,
 				dimension: 1,
 				min: 40,
-				max: 270,
+				max: 300,
 				inRange: {
-					color: ['#4395ff', '#66ff92', '#f8e85d', '#ff7f68', '#fe3971', '#6662dd']
+					color: BPMColorSchema
 				},
 				outOfRange: {
 					color: '#1f1f46'
@@ -96,7 +100,7 @@
 				data: dataList(),
 				animation: false,
 				smooth: true
-			},
+			}
 			// dataZoom: [
 			// 	{
 			// 		type: 'inside',
@@ -135,6 +139,5 @@
 </script>
 
 <div class="min-h-full w-full" bind:this={chartDom}></div>
-
 
 <svelte:window onresize={resize} />

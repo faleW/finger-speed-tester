@@ -14,7 +14,7 @@
 	import { onMount } from 'svelte';
 
 	let renameId: number | undefined = $state();
-	let processingRename: boolean = false;
+	let updateLock: Promise<void> | null = null;
 
 	function isActiveProfile(id: number) {
 		const pathId: number = Number(page.url.pathname.replace('/', ''));
@@ -47,14 +47,22 @@
 			console.log(error);
 		}
 	};
+	const tryUpdate = (id: number, event: any) => {
+		// If there's an update already happening, do nothing
+		if (updateLock) return;
+
+		// Set lock to a promise and clear it after update finishes
+		updateLock = (async () => {
+			await updateName(id, event);
+			updateLock = null;
+		})();
+	};
 
 	const updateName = (id: number, event: any) => {
 		try {
-			if (event.repeat || processingRename) return;
-			processingRename = true;
 			const newName: string | undefined = event.target.value;
 			if (newName && newName !== '') {
-				// console.log('newName', newName);
+				console.log('newName', newName);
 				db.speedTester.update(id, {
 					name: newName.trim()
 				});
@@ -62,7 +70,6 @@
 		} catch (error) {
 			console.log(error);
 		}
-		processingRename = false;
 		renameId = undefined;
 	};
 </script>
@@ -73,11 +80,11 @@
 		<Input
 			id="rename-input"
 			type="text"
-			onchange={(event) => updateName(id, event)}
-			onblur={(event) => updateName(id, event)}
+			onchange={(event) => tryUpdate(id, event)}
+			onblur={(event) => tryUpdate(id, event)}
 			onkeydown={(event) => {
 				if (event.key.toUpperCase() === 'ENTER') {
-					updateName(id, event);
+					tryUpdate(id, event);
 				}
 			}}
 			value={name}

@@ -71,6 +71,7 @@
 	{#if renameId && renameId === id}
 		{console.log('renameId', renameId)}
 		<Input
+			id="rename-input"
 			type="text"
 			onchange={(event) => updateName(id, event)}
 			onblur={(event) => updateName(id, event)}
@@ -109,7 +110,10 @@
 					>
 						<Ellipsis />
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content class="w-32 group-hover:block group-focus:block">
+					<DropdownMenu.Content 
+					class="w-32 group-hover:block group-focus:block"
+					onCloseAutoFocus={(event) => event.preventDefault()}
+					>
 						<DropdownMenu.Item onclick={() => (renameId = id)}>
 							<Pencil />
 							Rename
@@ -134,14 +138,16 @@
 	<Separator />
 	<main class="justtify-none flex flex-1 flex-col overflow-hidden p-4">
 		<div class="mb-4 flex flex-col overflow-hidden">
+			{@render Profile(0, 'Default')}
+			<Separator class="my-2"/>
 			<div class="flex flex-row items-center justify-between px-2 text-gray-500">
+				
 				Profile
 				<!-- <div class="text-center self-center overflow-hidden rounded-2xl h-6 w-6 hover:text-secondary-foreground hover:bg-secondary ">
 					+
 				</div> -->
 			</div>
 			<ScrollArea class="flex flex-col overflow-auto bg-transparent pr-4">
-				{@render Profile(0, 'Default')}
 				{#each $testers as tester (tester.id)}
 					{@render Profile(tester.id, tester.name)}
 				{/each}

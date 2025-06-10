@@ -52,7 +52,6 @@
 		myChart.resize();
 	};
 	onMount(() => {
-		console.log(mode)
 		myChart = echarts.init(chartDom, mode, { renderer: 'canvas' });
 
 		option = {

@@ -5,18 +5,11 @@
 	import { toggleMode } from 'mode-watcher';
 	import { Button } from '$lib/components/ui/button/index.js';
 	let ref : HTMLElement | null = null;
-
-	function removeFocus() {
-		ref?.blur();
-	}
 </script>
 
 <Button
 	bind:ref
-	onclick={() => {
-		toggleMode();
-		removeFocus();
-	}}
+	onclick={toggleMode}
 	variant="outline"
 	size="icon"
 >

@@ -15,6 +15,7 @@
 			Loading
 		{:then tester}
 			{#if tester}
+			<!-- <div>{tester.name}</div> -->
 			<SpeedTester {tester}></SpeedTester>
 			{:else}
 			Error

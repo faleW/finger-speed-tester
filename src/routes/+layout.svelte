@@ -7,8 +7,8 @@
 </script>
 
 <div class="flex h-screen min-h-screen w-full flex-row overflow-hidden select-none">
-	<ModeWatcher />
 	<Sidebar />
+	<ModeWatcher />
 	<Separator orientation="vertical" class="h" />
 	<main
 		class="flex h-screen min-h-screen w-full flex-col items-center justify-center overflow-hidden p-4"

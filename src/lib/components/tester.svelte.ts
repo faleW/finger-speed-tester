@@ -166,7 +166,7 @@ export class Tester {
         if (!event.data) return;
         // @ts-ignore
         const newKey: string = (event.data as string).toUpperCase();
-        if (this.keys.some(input => input.key === newKey))
+        if (newKey === " " || this.keys.some(input => input.key === newKey))
             this.keys[index].key = this.keys[index].previous.current ?? "";
         else
             this.keys[index].key = newKey;
@@ -179,6 +179,7 @@ export class Tester {
     }
 
     handleKeyDown(key: string) {
+        if(document.activeElement?.tagName === "INPUT") return;
         key = key.toUpperCase();
         if (!this.testing) {
 

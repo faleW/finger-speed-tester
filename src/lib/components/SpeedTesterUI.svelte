@@ -9,6 +9,7 @@
 	import { mode } from 'mode-watcher';
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/model/db';
+	import { cn } from '$lib/utils';
 
 	let { tester }: { tester: SpeedTester } = $props();
 
@@ -72,13 +73,15 @@
 					}
 				}}
 				value={$dbTester?.name}
-				class="text-center max-w-full w-full duration-150"
-				size={32}
-				style="font-size: 20px;"
+				class="text-center max-w-full w-full duration-150 p-5"
+				style="font-size: 1.25rem;"
 			/>
 		{:else}
 			<button
-				class="w-full shrink-0 cursor-pointer rounded-2xl border border-transparent p-2 text-xl font-semibold duration-150 hover:border-gray-400"
+				class={cn(`
+				w-full shrink-0 rounded-2xl 
+				border border-transparent p-2 text-xl font-semibold duration-150`, 
+				(tester.id !== 0 ) ? "hover:border-gray-400 cursor-pointer" : "")}
 				onclick={() => (renameOpen = true)}
 			>
 				{$dbTester?.name}
@@ -96,7 +99,7 @@
 							<Button
 								aria-checked={testerState.rule.type == 'Times'}
 								variant="ghost"
-								class="underline-offset-4 aria-checked:underline"
+								class="underline-offset-4 aria-checked:underline cursor-pointer"
 								onclick={() => {
 									testerState.rule.type = 'Times';
 								}}>Times (Seconds)</Button
@@ -105,7 +108,7 @@
 							<Button
 								aria-checked={testerState.rule.type == 'Clicks'}
 								variant="ghost"
-								class="underline-offset-4  aria-checked:underline"
+								class="underline-offset-4  aria-checked:underline  cursor-pointer"
 								onclick={() => {
 									testerState.rule.type = 'Clicks';
 								}}>Clicks</Button
@@ -143,7 +146,7 @@
 						</div>
 						<Button
 							variant="link"
-							class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300"
+							class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300 cursor-pointer"
 							onclick={() => testerState.initTest()}
 						>
 							Press 'Space' to start
@@ -208,7 +211,7 @@
 					</div>
 					<Button
 						variant="link"
-						class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300"
+						class="w-full text-center text-gray-500 underline underline-offset-4 dark:text-gray-300 cursor-pointer"
 						onclick={() => testerState.breakTest()}
 					>
 						Press 'Esc' to stop

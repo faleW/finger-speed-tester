@@ -81,6 +81,9 @@ const config: Config = {
         		"accordion-up": "accordion-up 0.2s ease-out",
        			"caret-blink": "caret-blink 1.25s ease-out infinite",
       		},
+			fontFamily: {
+				roboto: ['Roboto', 'sans-serif'],
+			}
 		},
 	}
 };

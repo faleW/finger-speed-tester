@@ -9,9 +9,12 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { goto } from '$app/navigation';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Delete, Ellipsis, Pencil } from '@lucide/svelte';
+	import { Delete, Download, Ellipsis, Info, Pencil } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { onMount } from 'svelte';
+	import { isTauri } from '@tauri-apps/api/core';
+	import OsuLogo from './OsuLogo.svelte';
+	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 
 	let renameId: number | undefined = $state();
 	let updateLock: Promise<void> | null = null;
@@ -72,6 +75,12 @@
 		}
 		renameId = undefined;
 	};
+
+	let isBrowser = $state(false);
+	// onMount(() => {
+	// 	isBrowser = !window.isTauri;
+	// 	console.log(window.isTauri);
+	// });
 </script>
 
 {#snippet Profile(id: number, name: string)}
@@ -117,9 +126,9 @@
 					>
 						<Ellipsis />
 					</DropdownMenu.Trigger>
-					<DropdownMenu.Content 
-					class="w-32 group-hover:block group-focus:block"
-					onCloseAutoFocus={(event) => event.preventDefault()}
+					<DropdownMenu.Content
+						class="w-32 group-hover:block group-focus:block"
+						onCloseAutoFocus={(event) => event.preventDefault()}
 					>
 						<DropdownMenu.Item onclick={() => (renameId = id)}>
 							<Pencil />
@@ -136,7 +145,9 @@
 		</a>
 	{/if}
 {/snippet}
-<div class="m-0 flex h-full w-64 flex-col justify-between overflow-hidden bg-sidebar text-sidebar-foreground">
+<div
+	class="bg-sidebar text-sidebar-foreground m-0 flex h-full w-56 min-w-56 flex-col justify-between overflow-hidden"
+>
 	<header class="flex flex-row gap-x-1 p-1">
 		<div class="w-full flex-1 self-center text-center">Finger Speed Tester</div>
 		<Separator orientation="vertical" />
@@ -146,9 +157,8 @@
 	<main class="justtify-none flex flex-1 flex-col overflow-hidden p-4">
 		<div class="mb-4 flex flex-col overflow-hidden">
 			{@render Profile(0, 'Default')}
-			<Separator class="my-2"/>
+			<Separator class="my-2" />
 			<div class="flex flex-row items-center justify-between px-2 text-gray-500">
-				
 				Profile
 				<!-- <div class="text-center self-center overflow-hidden rounded-2xl h-6 w-6 hover:text-secondary-foreground hover:bg-secondary ">
 					+
@@ -160,8 +170,53 @@
 				{/each}
 			</ScrollArea>
 		</div>
-		<Button variant="outline" onclick={() => addProfile()}>Add Profile</Button>
+		<Button class="cursor-pointer" variant="outline" onclick={() => addProfile()}>Add Profile</Button>
 	</main>
 	<Separator />
-	<footer>Download Desktop Version</footer>
+	<footer class="flex flex-col p-2">
+		<div class="pl-2">About me</div>
+		<div class="flex flex-row justify-center gap-4 m-1">
+			<a
+				href="https://osu.ppy.sh/users/6449465"
+				target="_blank"
+				rel="noreferrer noopener"
+				class="w-fit rounded-sm text-gray-600 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black dark:text-gray-400"
+			>
+				osu@aRnio
+			</a>
+			<a
+				href="https://github.com/faleW"
+				target="_blank"
+				rel="noreferrer noopener"
+				class="w-fit rounded-sm text-gray-600 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-8 focus-visible:outline-black dark:text-gray-400"
+			>
+				github@falew
+			</a>
+		</div>
+		<a
+			href="/"
+			target="_blank"
+			class="hover:bg-secondary m-1 flex flex-row gap-2 rounded-2xl border border-transparent p-2"
+		>
+			<Info />About Application
+		</a>
+		{#if !isTauri()}
+			<div
+				class="hover:bg-secondary m-1 flex flex-nowrap items-center rounded-2xl border-transparent"
+			>
+				<Tooltip.Provider>
+					<Tooltip.Root>
+						<Tooltip.Trigger>
+							<a href="/" class="group flex flex-nowrap gap-2 p-2">
+								<Download class="animate-bounce" />
+								Download Desktop
+							</a>
+							<!-- <Info class="h-4" /> -->
+						</Tooltip.Trigger>
+						<Tooltip.Content>Desktop version ensures the persistent data.</Tooltip.Content>
+					</Tooltip.Root>
+				</Tooltip.Provider>
+			</div>
+		{/if}
+	</footer>
 </div>

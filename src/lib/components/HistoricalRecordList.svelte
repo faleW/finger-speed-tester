@@ -85,7 +85,7 @@
                                         data-delete
 										size="icon"
 										variant="ghost"
-										class="h-5 w-5 p-0 text-red-500 hover:text-red-600 hidden"
+										class="h-5 w-5 p-0 text-red-500 hover:text-red-600 hidden cursor-pointer"
 										onclick={() => {
 											openDelete = true;
 											recordForDelete = record;
@@ -121,6 +121,6 @@
 				{@render TesterInfo(recordForDelete)}
 			</div>
 		{/if}
-		<Button variant="destructive" onclick={() => deleteRecord()} class="select-none">Delete</Button>
+		<Button variant="destructive" onclick={() => deleteRecord()} class="select-none cursor-pointer">Delete</Button>
 	</Dialog.Content>
 </Dialog.Root>

@@ -7,7 +7,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 </script>
 
-<div class="flex h-screen min-h-screen w-full flex-row overflow-hidden select-none">
+<div  style="font-family: 'Roboto', sans-serif;" class="flex h-screen min-h-screen w-full flex-row overflow-hidden select-none font-normal">
 	<Sidebar />
 	<ModeWatcher />
 	<Separator orientation="vertical" class="h" />

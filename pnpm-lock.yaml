@@ -32,6 +32,9 @@ importers:
       runed:
         specifier: ^0.28.0
         version: 0.28.0(svelte@5.33.10)
+      svelte-tiny-virtual-list:
+        specifier: ^2.1.2
+        version: 2.1.2
       tailwind-merge:
         specifier: ^3.3.0
         version: 3.3.0
@@ -1456,6 +1459,9 @@ packages:
       svelte:
         optional: true
 
+  svelte-tiny-virtual-list@2.1.2:
+    resolution: {integrity: sha512-jeP/WMvgFUR4mYXHGPiCexjX5DuzSO+3xzHNhxfcsFyy+uYPtnqI5UGb383swpzQAyXB0OBqYfzpYihD/5gxnA==}
+
   svelte-toolbelt@0.9.1:
     resolution: {integrity: sha512-wBX6MtYw/kpht80j5zLpxJyR9soLizXPIAIWEVd9llAi17SR44ZdG291bldjB7r/K5duC0opDFcuhk2cA1hb8g==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
@@ -2775,6 +2781,8 @@ snapshots:
       postcss-selector-parser: 7.1.0
     optionalDependencies:
       svelte: 5.33.10
+
+  svelte-tiny-virtual-list@2.1.2: {}
 
   svelte-toolbelt@0.9.1(svelte@5.33.10):
     dependencies:

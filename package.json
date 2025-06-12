@@ -1,11 +1,10 @@
 {
-	"name": "tauri2-svelte5-shadcn",
+	"name": "finger-speed-tester",
 	"private": true,
 	"version": "2.0.0",
-	"description": "A simple desktop application template combining Tauri 2 with Svelte 5 and shadcn-svelte with a basic ci/cd implemented.",
+	"description": "Test and record your finger speed",
 	"author": {
-		"name": "Alysonhower Veras Vieira",
-		"email": "contato@alysonhower.dev"
+		"name": "aRnio"
 	},
 	"type": "module",
 	"scripts": {
@@ -50,6 +49,7 @@
 		"echarts": "^5.6.0",
 		"mode-watcher": "0.5.1",
 		"runed": "^0.28.0",
+		"svelte-tiny-virtual-list": "^2.1.2",
 		"tailwind-merge": "^3.3.0",
 		"tailwindcss": "^4.1.7"
 	}

@@ -2,30 +2,41 @@ import type { PageLoad } from "./$types";
 
 import { liveQuery } from "dexie";
 import { db } from "$lib/model/db";
+import type { SpeedTester } from "$lib/model/speed-tester";
 export const load: PageLoad = async ({ params }) => {
-    
-    let id: number = Number(params.tests);
-    if(isNaN(id)) id = 0;
+
+    let id: string = params.tests ?? "";
 
     // console.log("Page load, id",id)
-    
+
     // add default setting
-    if (id === 0) {
+    if (id === "") {
         const tester = await db.speedTester
             .where('id')
-            .equals(0)
+            .equals("0")
             .first();
         if (!tester) {
-            await db.speedTester.add({
-                id: 0,
+            console.log("Default not exists. Create a new one.");
+            const defaultTester : SpeedTester = {
+                id: "0",
                 name: "Default",
                 keys: ["Z", "X"],
                 type: "Times",
-                amount: 10
-            })
-        }
+                amount: 10,
+                createTime: new Date(),
+                updateTime: new Date(),
+                recordUpdateTime: new Date()
+            };
+            id = await db.speedTester.add(defaultTester);
+            return {
+                tester: defaultTester
+            };
+        } else
+            return {
+                tester: tester
+            };
     }
-    
+
     return {
         tester: await db.speedTester
             .where('id')

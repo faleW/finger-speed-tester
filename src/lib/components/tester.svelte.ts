@@ -32,7 +32,7 @@ export type HitRecord = {
 type ReactiveSaveType = "Rule" | "Keys";
 
 export class Tester {
-    id: number;
+    id: string;
     name: string;
     testing: boolean = $state(false);
     isRunning = $state(false);
@@ -47,7 +47,7 @@ export class Tester {
     private timesTimerId?: number;
     private gameTimerId?: number;
     constructor(speedTester?: SpeedTester) {
-        this.id = speedTester?.id ?? 0;
+        this.id = speedTester?.id ?? "0";
         this.name = speedTester?.name ?? "Default";
         speedTester?.keys.forEach(element => {
             this.keys.push(new ClickableKeyInput(element));

@@ -15,24 +15,29 @@
 	import { isTauri } from '@tauri-apps/api/core';
 	import OsuLogo from './OsuLogo.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import { v4 as uuidv4 } from 'uuid';
 
-	let renameId: number | undefined = $state();
+	let renameId: string | undefined = $state();
 	let updateLock: Promise<void> | null = null;
 
-	function isActiveProfile(id: number) {
-		const pathId: number = Number(page.url.pathname.replace('/', ''));
-		return pathId === id;
+	function isActiveProfile(id: string) {
+		const pathId = page.url.pathname.replace('/', '');
+		return pathId ==="" && id ==="0" || pathId === id;
 	}
 
-	let testers = liveQuery(() => db.speedTester.where('id').notEqual(0).sortBy('createdTime'));
+	let testers = liveQuery(() => db.speedTester.where('id').notEqual("0").sortBy('createdTime'));
 
 	const addProfile = async () => {
 		try {
 			const id = await db.speedTester.add({
+				id: uuidv4(),
 				name: 'New Tester',
 				keys: ['Z', 'X'],
 				type: 'Times',
-				amount: 10
+				amount: 10,
+				createTime: new Date(),
+                updateTime: new Date(),
+                recordUpdateTime: new Date()
 			});
 
 			await goto(`/${id}`);
@@ -46,7 +51,7 @@
 		}
 	};
 
-	const deleteProfile = async (id: number) => {
+	const deleteProfile = async (id: string) => {
 		try {
 			await db.speedTesterRecord.where('testerId').equals(id).delete();
 			await db.speedTester.delete(id);
@@ -55,7 +60,7 @@
 			console.log(error);
 		}
 	};
-	const tryUpdate = (id: number, event: any) => {
+	const tryUpdate = (id: string, event: any) => {
 		// If there's an update already happening, do nothing
 		if (updateLock) return;
 
@@ -66,7 +71,7 @@
 		})();
 	};
 
-	const updateName = (id: number, event: any) => {
+	const updateName = (id: string, event: any) => {
 		try {
 			const newName: string | undefined = event.target.value;
 			if (newName && newName !== '') {
@@ -88,7 +93,7 @@
 	// });
 </script>
 
-{#snippet Profile(id: number, name: string)}
+{#snippet Profile(id: string, name: string)}
 	{#if renameId && renameId === id}
 		{console.log('renameId', renameId)}
 		<Input
@@ -111,7 +116,7 @@
 		<a
 			data-sveltekit-preload-code="off"
 			id={'sidebar-profile-' + id}
-			href={'/' + (id == 0 ? '' : id)}
+			href={'/' + (id == "0" ? '' : id)}
 			class={cn(
 				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,
@@ -119,7 +124,7 @@
 			)}
 		>
 			{name}
-			{#if id !== 0}
+			{#if id !== "0"}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
 						data-menu
@@ -165,7 +170,7 @@
 	<Separator />
 	<main class="justtify-none flex flex-1 flex-col overflow-hidden px-4 py-2">
 		<div class="mb-4 flex flex-col overflow-hidden">
-			{@render Profile(0, 'Default')}
+			{@render Profile("0", 'Default')}
 			<Separator class="my-2" />
 			<div class="flex flex-row items-center justify-between px-2 text-gray-500">
 				Profile

@@ -1,15 +1,18 @@
 export type HitType = "Times" | "Clicks";
 
 export interface SpeedTester {
-    id: number;
+    id: string;
     name: string;
     keys: string[];
     type: HitType;
     amount: number;
+    createTime: Date;
+    updateTime: Date;
+    recordUpdateTime: Date;
 }
 export interface SpeedTesterRecord {
     recordId: number;
-    testerId: number;
+    testerId: string;
     createdTime: Date;
     keys: string[];
     type: HitType;

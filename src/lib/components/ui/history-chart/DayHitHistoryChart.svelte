@@ -56,7 +56,7 @@
 		averageBpm: number;
 		count: number;
 	};
-	let { id, mode }: { id: number; mode: ThemeMode } = $props();
+	let { id, mode }: { id: string; mode: ThemeMode } = $props();
 	let data: DataType[];
 
 	let records = liveQuery(() =>

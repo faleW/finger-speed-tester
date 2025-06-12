@@ -17,7 +17,7 @@
 		subscription = liveQuery(() =>
 			db.speedTester
 				.where('id')
-				.equals(data.tester?.id ?? 0)
+				.equals(data.tester?.id ?? "0")
 				.first()
 		).subscribe({
 			next: (result) => {
@@ -29,10 +29,8 @@
 	});
 
 	onMount(()=> {
-
-		const id = data.tester?.id ?? 0;
+		const id = data.tester?.id ?? "0";
 		setTimeout(() => {
-			console.log("scroll onMount")
 			document.getElementById(`sidebar-profile-${id}`)?.scrollIntoView({ behavior: 'smooth' });
 		}, 100);
 	})
@@ -57,9 +55,9 @@
 			<!-- Loading -->
 		{:then tester}
 			{#if tester}
-				<HitHistoryChart id={tester?.id ?? 0} />
+				<HitHistoryChart id={tester?.id ?? "0"} />
 				<Separator orientation="vertical" class="mx-4" />
-				<HistoricalRecordList id={tester?.id ?? 0} />
+				<HistoricalRecordList id={tester?.id ?? "0"} />
 			{:else}
 				Error
 			{/if}

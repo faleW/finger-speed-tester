@@ -51,6 +51,7 @@
 		"runed": "^0.28.0",
 		"svelte-tiny-virtual-list": "^2.1.2",
 		"tailwind-merge": "^3.3.0",
-		"tailwindcss": "^4.1.7"
+		"tailwindcss": "^4.1.7",
+		"uuid": "^11.1.0"
 	}
 }

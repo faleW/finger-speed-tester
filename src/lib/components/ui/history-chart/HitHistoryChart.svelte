@@ -3,7 +3,7 @@
 	import Separator from '../separator/separator.svelte';
 	import DayHitHistoryChart from './DayHitHistoryChart.svelte';
 	import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
-	let { id }: { id: number } = $props();
+	let { id }: { id: string } = $props();
 	let chartType: 'day' | 'time' = $state('day');
 	import { mode } from 'mode-watcher';
 </script>

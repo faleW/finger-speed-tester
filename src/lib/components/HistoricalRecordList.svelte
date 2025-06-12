@@ -10,7 +10,7 @@
 	import type { SpeedTesterRecord } from '$lib/model/speed-tester';
 	import Button from './ui/button/button.svelte';
 	import { Delete } from '@lucide/svelte';
-	let { id }: { id: number } = $props();
+	let { id }: { id: string } = $props();
 
 	let records = liveQuery(() =>
 		db.speedTesterRecord.where('testerId').equals(id).reverse().sortBy('createdTime')

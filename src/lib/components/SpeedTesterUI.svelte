@@ -25,7 +25,7 @@
 	let dbTester = liveQuery(() =>
 		db.speedTester
 			.where('id')
-			.equals(tester?.id ?? 0)
+			.equals(tester?.id ?? "0")
 			.first()
 	);
 
@@ -40,8 +40,8 @@
 		})();
 	};
 	const updateName = (event: any) => {
-		const id: number = tester?.id ?? 0;
-		if (id === 0) return;
+		const id: string = tester?.id ?? "0";
+		if (id === "0") return;
 
 		// console.log('update name');
 		try {
@@ -61,7 +61,7 @@
 
 <div class="flex h-full w-full max-w-[1000px] min-w-[500px] flex-row items-center gap-4 p-2">
 	<div class="flex h-full w-full flex-col items-center justify-between">
-		{#if renameOpen && tester && tester.id !== 0}
+		{#if renameOpen && tester && tester.id !== "0"}
 			<Input
 				type="text"
 				autofocus
@@ -81,7 +81,7 @@
 				class={cn(`
 				w-full shrink-0 rounded-2xl 
 				border border-transparent p-2 text-xl font-semibold duration-150`, 
-				(tester.id !== 0 ) ? "hover:border-gray-400 cursor-pointer" : "")}
+				(tester.id !== "0" ) ? "hover:border-gray-400 cursor-pointer" : "")}
 				onclick={() => (renameOpen = true)}
 			>
 				{$dbTester?.name}

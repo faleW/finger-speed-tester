@@ -48,12 +48,12 @@
 	let data: (Date | number)[][] = [];
 
 	let records = liveQuery(() =>
-		db.speedTesterRecord.where('testerId').equals(id).sortBy('createdTime')
+		db.speedTesterRecord.where('testerId').equals(id).sortBy('createTime')
 	);
 	const subscription = records.subscribe({
 		next: (result) => {
 			data = result.map(function (item) {
-				return [item.createdTime, Number(item.bpm.toFixed(3))];
+				return [item.createTime, Number(item.bpm.toFixed(3))];
 			});
 			myChart.setOption({
 				series: {

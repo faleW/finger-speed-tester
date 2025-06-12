@@ -25,7 +25,7 @@
 		return pathId ==="" && id ==="0" || pathId === id;
 	}
 
-	let testers = liveQuery(() => db.speedTester.where('id').notEqual("0").sortBy('createdTime'));
+	let testers = liveQuery(() => db.speedTester.where('id').notEqual("0").sortBy('createTime'));
 
 	const addProfile = async () => {
 		try {

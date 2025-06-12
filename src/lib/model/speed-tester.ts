@@ -13,7 +13,7 @@ export interface SpeedTester {
 export interface SpeedTesterRecord {
     recordId: number;
     testerId: string;
-    createdTime: Date;
+    createTime: Date;
     keys: string[];
     type: HitType;
     amount: number;

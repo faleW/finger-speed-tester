@@ -60,13 +60,13 @@
 	let data: DataType[];
 
 	let records = liveQuery(() =>
-		db.speedTesterRecord.where('testerId').equals(id).sortBy('createdTime')
+		db.speedTesterRecord.where('testerId').equals(id).sortBy('createTime')
 	);
 	const subscription = records.subscribe({
 		next: (result) => {
 			let dataObject: Map<string, DataType> = new Map<string, DataType>();
 			result.forEach(function (item) {
-				const date = convertUtcToLocalDateString(item.createdTime);
+				const date = convertUtcToLocalDateString(item.createTime);
 				const curr = dataObject.get(date);
 				dataObject.set(date, {
 					date: date,

@@ -132,7 +132,7 @@ export class Tester {
         // now.setDate(now.getDate() - 3)
         db.speedTesterRecord.put({
             testerId: this.id,
-            createdTime: now,
+            createTime: now,
             keys: this.keys.map((value) => value.key),
             type: this.rule.type,
             amount: this.rule.amount,

@@ -13,7 +13,7 @@
 	let { id }: { id: string } = $props();
 
 	let records = liveQuery(() =>
-		db.speedTesterRecord.where('testerId').equals(id).reverse().sortBy('createdTime')
+		db.speedTesterRecord.where('testerId').equals(id).reverse().sortBy('createTime')
 	);
 
 	let data: Record<string, SpeedTesterRecord[]> = $state({});
@@ -29,7 +29,7 @@
 		next: (result) => {
 			let dataObject: Record<string, SpeedTesterRecord[]> = {};
 			result.forEach(function (item) {
-				const date = convertUtcToLocalDateString(item.createdTime);
+				const date = convertUtcToLocalDateString(item.createTime);
 				if (dataObject[date]) {
 					dataObject[date].push(item);
 				} else {
@@ -63,7 +63,7 @@
 	<p>Hit: {record.numberOfHits} per {record.periodTime} seconds</p>
 	<p>Rule: {record.amount} {record.type === 'Times' ? 'seconds' : 'clicks'}</p>
 	<p>Keys: {record.keys.join(', ')}</p>
-	<p>Test at: {record.createdTime.toLocaleString()}</p>
+	<p>Test at: {record.createTime.toLocaleString()}</p>
 {/snippet}
 <div class="m-2 mt-4 h-full w-[180px] overflow-y-hidden">
 	<!-- <span class=" text-base font-semibold">History</span>
@@ -80,7 +80,7 @@
 									class="mb-1 flex flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs hover:border-gray-300
                                     hover:**:data-delete:block h-6"
 								>
-									{toLocalTimeOnly(record.createdTime)} BPM: {record.bpm}
+									{toLocalTimeOnly(record.createTime)} BPM: {record.bpm}
 									<Button
                                         data-delete
 										size="icon"

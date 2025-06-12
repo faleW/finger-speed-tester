@@ -17,7 +17,7 @@ const db = new Dexie('SpeedTesterDatabase') as Dexie & {
 // Schema declaration:
 db.version(1).stores({
     speedTester: 'id, name, keys, type, amount, createTime, updateTime, recordUpdateTime', // primary key "id" (for the runtime!),
-    speedTesterRecord: '++recordId, testerId, createdTime, keys, type, amount, periodTime, numberOfHits, bpm, unstableRate'
+    speedTesterRecord: '++recordId, testerId, createTime, keys, type, amount, periodTime, numberOfHits, bpm, unstableRate'
 });
 
 export { db };

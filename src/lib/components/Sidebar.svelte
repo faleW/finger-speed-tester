@@ -99,9 +99,9 @@
 			id={'sidebar-profile-' + id}
 			href={'/' + (id == 0 ? '' : id)}
 			class={cn(
-				`hover:bg-secondary hover:text-secondary-foreground group relative flex w-full 
+				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,
-				isActive ? 'bg-secondary text-secondary-foreground' : ''
+				isActive ? 'bg-sidebar-accent text-sidebar-accent-foreground' : ''
 			)}
 		>
 			{name}
@@ -136,7 +136,7 @@
 		</a>
 	{/if}
 {/snippet}
-<div class="m-0 flex h-full w-64 flex-col justify-between overflow-hidden">
+<div class="m-0 flex h-full w-64 flex-col justify-between overflow-hidden bg-sidebar text-sidebar-foreground">
 	<header class="flex flex-row gap-x-1 p-1">
 		<div class="w-full flex-1 self-center text-center">Finger Speed Tester</div>
 		<Separator orientation="vertical" />

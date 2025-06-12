@@ -206,9 +206,8 @@ export class Tester {
                 time: elapsedSeconds,
                 bpm: (elapsedSeconds == 0) ? 0 : this.hitCount / elapsedSeconds * 60 / 4
             });
-            if (this.rule.type === "Clicks" && this.hitCount === this.rule.amount) this.finishTest();
-
             this.updateGameState();
+            if (this.rule.type === "Clicks" && this.hitCount === this.rule.amount) this.finishTest();
         }
     }
 }

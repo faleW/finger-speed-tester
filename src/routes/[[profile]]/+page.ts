@@ -5,7 +5,7 @@ import { db } from "$lib/model/db";
 import type { SpeedTester } from "$lib/model/speed-tester";
 export const load: PageLoad = async ({ params }) => {
 
-    let id: string = params.tests ?? "";
+    let id: string = params.profile ?? "";
 
     // console.log("Page load, id",id)
 

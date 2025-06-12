@@ -11,7 +11,7 @@
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Delete, Download, Ellipsis, Info, Pencil } from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input';
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { isTauri } from '@tauri-apps/api/core';
 	import OsuLogo from './OsuLogo.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
@@ -35,7 +35,12 @@
 				amount: 10
 			});
 
-			goto(`/${id}#sidebar-profile-${id}`);
+			await goto(`/${id}`);
+			await tick(); // Wait for DOM update
+			setTimeout(() => {
+				console.log('scroll sidebar');
+				document.getElementById(`sidebar-profile-${id}`)?.scrollIntoView({ behavior: 'smooth' });
+			}, 100);
 		} catch (error) {
 			console.log(error);
 		}
@@ -120,8 +125,8 @@
 						data-menu
 						class={cn(
 							buttonVariants({ variant: 'ghost' }),
-							`h-6 w-6 items-center justify-center opacity-0 
-						duration-200 group-hover:opacity-100 group-focus:opacity-100`
+							`h-6 w-6 cursor-pointer items-center justify-center 
+						opacity-0 duration-200 group-hover:opacity-100 group-focus:opacity-100`
 						)}
 					>
 						<Ellipsis />
@@ -130,12 +135,16 @@
 						class="w-32 group-hover:block group-focus:block"
 						onCloseAutoFocus={(event) => event.preventDefault()}
 					>
-						<DropdownMenu.Item onclick={() => (renameId = id)}>
+						<DropdownMenu.Item class="cursor-pointer" onclick={() => (renameId = id)}>
 							<Pencil />
 							Rename
 						</DropdownMenu.Item>
 						<Separator />
-						<DropdownMenu.Item variant="destructive" onclick={() => deleteProfile(id)}>
+						<DropdownMenu.Item
+							class="cursor-pointer"
+							variant="destructive"
+							onclick={() => deleteProfile(id)}
+						>
 							<Delete />
 							Delete
 						</DropdownMenu.Item>
@@ -154,7 +163,7 @@
 		<DarkModeToggle />
 	</header>
 	<Separator />
-	<main class="justtify-none flex flex-1 flex-col overflow-hidden p-4">
+	<main class="justtify-none flex flex-1 flex-col overflow-hidden px-4 py-2">
 		<div class="mb-4 flex flex-col overflow-hidden">
 			{@render Profile(0, 'Default')}
 			<Separator class="my-2" />
@@ -164,18 +173,20 @@
 					+
 				</div> -->
 			</div>
-			<ScrollArea class="flex flex-col overflow-auto bg-transparent pr-4">
+			<ScrollArea class="flex flex-col overflow-auto bg-transparent">
 				{#each $testers as tester (tester.id)}
 					{@render Profile(tester.id, tester.name)}
 				{/each}
 			</ScrollArea>
 		</div>
-		<Button class="cursor-pointer" variant="outline" onclick={() => addProfile()}>Add Profile</Button>
+		<Button class="cursor-pointer" variant="outline" onclick={() => addProfile()}
+			>Add Profile</Button
+		>
 	</main>
 	<Separator />
 	<footer class="flex flex-col p-2">
 		<div class="pl-2">About me</div>
-		<div class="flex flex-row justify-center gap-4 m-1">
+		<div class="m-1 flex flex-row justify-center gap-4">
 			<a
 				href="https://osu.ppy.sh/users/6449465"
 				target="_blank"
@@ -196,13 +207,13 @@
 		<a
 			href="/"
 			target="_blank"
-			class="hover:bg-secondary m-1 flex flex-row gap-2 rounded-2xl border border-transparent p-2"
+			class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground m-1 flex flex-row gap-2 rounded-2xl border border-transparent p-2"
 		>
 			<Info />About Application
 		</a>
 		{#if !isTauri()}
 			<div
-				class="hover:bg-secondary m-1 flex flex-nowrap items-center rounded-2xl border-transparent"
+				class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground m-1 flex flex-nowrap items-center rounded-2xl border-transparent"
 			>
 				<Tooltip.Provider>
 					<Tooltip.Root>

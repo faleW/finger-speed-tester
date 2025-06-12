@@ -9,6 +9,7 @@
 	import { db } from '$lib/model/db.js';
 	import type { Observable, Subscription } from 'dexie';
 	import { liveQuery } from 'dexie';
+	import { onMount } from 'svelte';
 	let { data } = $props();
 	let subscription: Subscription;
 	$effect(() => {
@@ -26,6 +27,15 @@
 		});
 		// console.log('+page.svelte $effect', data.tester?.name);
 	});
+
+	onMount(()=> {
+
+		const id = data.tester?.id ?? 0;
+		setTimeout(() => {
+			console.log("scroll onMount")
+			document.getElementById(`sidebar-profile-${id}`)?.scrollIntoView({ behavior: 'smooth' });
+		}, 100);
+	})
 </script>
 
 {#key data.tester}

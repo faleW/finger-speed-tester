@@ -1,32 +1,20 @@
-# Tauri 2 Svelte 5 Shadcn
+# Finger Speed Tracker
+A simple desktop/web application to track and visualize your finger speed. It helps you analyze performance over time and stay organized with testing profiles. I develop mainly to track my osu! stream and single tapping speed.
+> I originally developed this app to track my osu! streaming and single tapping speed.
 
-Simple boilerplate for Tauri 2 with Svelte 5 (and shadcn-svelte).
+## ✨ Features
+1. Test your finger speed
+2. Add different profiles for you to category depending on your testing purposes (e.g. separate stream 400 clicks and single tap 200 clicks)
+3. Visualize your latest and historical testing data
+4. Export and Import Data (Not implemented)
 
-## Requirements
+## 📌  Road Map
+1. Support multiple keys (Currently support 2 keys only)
+2. Export and Import Data
+   - Export to csv or json
+   - Import custom json from export function 
 
-In order to run this boilerplate, you need to install Node (via nvm) and Rust. If you are on Windows I also recommend installing MSVC before the other dependencies (make sure to check the "Desktop development with C++" workload).
-
-Some useful links:
-
-- https://github.com/coreybutler/nvm-windows/releases (Windows: pick the nvm installer)
-- https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating (Linux: run `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash`)
-- https://www.rust-lang.org/tools/install
-- https://visualstudio.microsoft.com/vs/community/
-
-## Setup
-
-1. Click the "Use this template" button on GitHub.
-2. Clone your newly created repository:
-   ```
-   git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY_NAME.git
-   cd YOUR_REPOSITORY_NAME
-   ```
-3. Install dependencies:
-   ```
-   npm i
-   ```
-
-## Useful commands
+## 🚀 Useful commands
 
 ### Start dev server
 
@@ -40,28 +28,10 @@ npm run tauri dev
 npm run tauri build
 ```
 
-### Add shadcn-svelte component
+## ⚙️ Tech Stack
+1. Svelte + Sveltekit - UI and UI Routing
+2. Tauri - Desktop Application
+3. Dexie.js - Indexed DB to collect historical data
 
-```
-npx shadcn-svelte@next add <component>
-```
-
-Replace `<component>` with the name of the component you want to add (e.g., button, card, dialog). You can find the full list of available components at https://next.shadcn-svelte.com/docs/components.
-
-## Other links
-
-### Svelte 5
-
-https://svelte.dev/docs
-
-### Tauri 2
-
-https://tauri.app/start/
-
-### shadcn-svelte
-
-https://next.shadcn-svelte.com/
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+## 📝 License
+MIT License — free for personal and commercial use.

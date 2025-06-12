@@ -7,7 +7,7 @@ export const load: PageLoad = async ({ params }) => {
     let id: number = Number(params.tests);
     if(isNaN(id)) id = 0;
 
-    console.log("Page load, id",id)
+    // console.log("Page load, id",id)
     
     // add default setting
     if (id === 0) {

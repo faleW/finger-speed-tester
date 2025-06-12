@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { PageHeader } from '$lib/commands.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { Separator } from '$lib/components/ui/separator';
 	import '../app.css';
@@ -17,3 +18,7 @@
 		{@render children?.()}
 	</main>
 </div>
+
+<svelte:head>
+	<title>{PageHeader.title}</title>
+</svelte:head>

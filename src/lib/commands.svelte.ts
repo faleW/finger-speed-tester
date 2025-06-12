@@ -62,3 +62,8 @@ export class GlobalState {
         this.greet = '';
     }
 }
+class PageHeaderClass {
+    title = $state("Finger Speed Tester");
+}
+
+export const PageHeader = new PageHeaderClass();

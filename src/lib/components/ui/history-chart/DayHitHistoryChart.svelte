@@ -165,17 +165,17 @@
 				}
 			},
 			legend: {
-				selected: {
-					Min: false,
-					Max: true,
-					Average: false,
-					'Play Count': false
-				}
+				// selected: {
+				// 	Min: false,
+				// 	Max: true,
+				// 	Average: false,
+				// 	'Play Count': false
+				// }
 			},
 			toolbox: {
-				feature: {
-					saveAsImage: {}
-				}
+				// feature: {
+				// 	saveAsImage: {}
+				// }
 			},
 			xAxis: {
 				type: 'time',

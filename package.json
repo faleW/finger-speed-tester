@@ -43,6 +43,7 @@
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.7",
 		"@tauri-apps/api": "^2.5.0",
+		"@tauri-apps/plugin-opener": "~2.2.7",
 		"@types/node": "^22.15.19",
 		"clsx": "^2.1.1",
 		"dexie": "^4.0.11",

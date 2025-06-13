@@ -210,7 +210,7 @@
 			</a>
 		</div>
 		<a
-			href="/"
+			href="https://github.com/faleW/finger-speed-tester"
 			target="_blank"
 			class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground m-1 flex flex-row gap-2 rounded-2xl border border-transparent p-2"
 		>

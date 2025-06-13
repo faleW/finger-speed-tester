@@ -1,5 +1,4 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { svelte } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 import { defineConfig } from 'vite';
@@ -26,6 +25,6 @@ export default defineConfig({
 	build: {
 		target: process.env.TAURI_ENV_PLATFORM == 'windows' ? 'chrome105' : 'safari13',
 		minify: !process.env.TAURI_ENV_DEBUG ? 'esbuild' : false,
-		sourcemap: !!process.env.TAURI_ENV_DEBUG
+		sourcemap: !!process.env.TAURI_ENV_DEBUG 
 	}
 });

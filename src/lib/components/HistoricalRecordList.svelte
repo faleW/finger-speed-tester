@@ -9,7 +9,8 @@
 	import Button from './ui/button/button.svelte';
 	import { Delete, Key } from '@lucide/svelte';
 	let { id }: { id: string } = $props();
-	import VirtualList from 'svelte-tiny-virtual-list';
+	import VirtualScroll from 'svelte-virtual-scroll-list';
+	import Separator from './ui/separator/separator.svelte';
 
 	let records = liveQuery(() =>
 		db.speedTesterRecord.where('testerId').equals(id).reverse().sortBy('createTime')
@@ -20,7 +21,7 @@
 		isHeader: boolean;
 		record: SpeedTesterRecord;
 	};
-	let data: DataType[] = $state([]);
+	let items: DataType[] = $state([]);
 
 	function toLocalTimeOnly(date: Date) {
 		return date.toLocaleTimeString([], {
@@ -52,8 +53,8 @@
 					index: index++
 				});
 			});
-			data = dataObject;
-			console.log(data.length)
+			items = dataObject;
+			console.log(items.length);
 		},
 		error: (error) => console.error(error)
 	});
@@ -72,6 +73,8 @@
 		}
 		openDelete = false;
 	};
+
+	let list;
 </script>
 
 {#snippet TesterInfo(record: SpeedTesterRecord)}
@@ -81,43 +84,42 @@
 	<p>Keys: {record.keys.join(', ')}</p>
 	<p>Test at: {record.createTime.toLocaleString()}</p>
 {/snippet}
-<div class="m-2 mt-4 h-full w-[180px] overflow-y-auto">
-	<VirtualList width="auto" height={350} itemCount={data.length} itemSize={28}>
-		<div slot="item" let:index let:style {style} class="flex flex-col">
-			{@const { date, record, isHeader } = data[index]}
-			{#if isHeader}
-				<div class="m-0 h-7 text-sm">{date}</div>
-			{:else}
-				<Tooltip.Provider>
-					<Tooltip.Root>
-						<Tooltip.Trigger>
-							<div
-								class="mb-1 flex h-6 flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs
+
+{#snippet Record(record: SpeedTesterRecord)}
+	<Tooltip.Provider>
+		<Tooltip.Root>
+			<Tooltip.Trigger
+				class="mb-1 flex h-6 w-full flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs
                                     hover:border-gray-300 hover:**:data-delete:block"
-							>
-								{toLocalTimeOnly(record.createTime)} BPM: {record.bpm}
-								<Button
-									data-delete
-									size="icon"
-									variant="ghost"
-									class="hidden h-5 w-5 cursor-pointer p-0 text-red-500 hover:text-red-600"
-									onclick={() => {
-										openDelete = true;
-										recordForDelete = record;
-									}}
-								>
-									<Delete />
-								</Button>
-							</div>
-						</Tooltip.Trigger>
-						<Tooltip.Content>
-							{@render TesterInfo(record)}
-						</Tooltip.Content>
-					</Tooltip.Root>
-				</Tooltip.Provider>
-			{/if}
-		</div>
-	</VirtualList>
+			>
+				{toLocalTimeOnly(record.createTime)} BPM: {record.bpm}
+				<Button
+					data-delete
+					size="icon"
+					variant="ghost"
+					class="hidden h-5 w-5 cursor-pointer p-0 text-red-500 hover:text-red-600"
+					onclick={() => {
+						openDelete = true;
+						recordForDelete = record;
+					}}
+				>
+					<Delete />
+				</Button>
+			</Tooltip.Trigger>
+			<Tooltip.Content>
+				{@render TesterInfo(record)}
+			</Tooltip.Content>
+		</Tooltip.Root>
+	</Tooltip.Provider>
+{/snippet}
+<div class="m-2 mt-4 h-full w-[180px] overflow-y-auto">
+	<VirtualScroll bind:this={list} keeps={20} estimateSize={24} data={items} key="index" let:data>
+		{#if data.isHeader}
+			{data.date}
+		{:else}
+			{@render Record(data.record)}
+		{/if}
+	</VirtualScroll>
 </div>
 
 <Dialog.Root bind:open={openDelete}>

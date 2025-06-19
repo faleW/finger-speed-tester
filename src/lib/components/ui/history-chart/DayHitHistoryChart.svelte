@@ -73,7 +73,7 @@
 					minBpm: Math.min(item.bpm, curr?.minBpm ?? item.bpm),
 					maxBpm: Math.max(item.bpm, curr?.maxBpm ?? item.bpm),
 					averageBpm: curr
-						? (curr.averageBpm * curr.count + item.bpm) / (curr.count + 1)
+						? Number(((curr.averageBpm * curr.count + item.bpm) / (curr.count + 1)).toFixed(3))
 						: item.bpm,
 					count: (curr?.count ?? 0) + 1
 				} as DataType);
@@ -159,7 +159,7 @@
 
 					let result = `${dateOnly}<br/>`;
 					params.forEach((param) => {
-						result += `${param.marker} ${param.seriesName}: ${Number(param.data[1]).toFixed(3)}<br/>`;
+						result += `${param.marker} ${param.seriesName}: ${Number(param.data[1])}<br/>`;
 					});
 					return result;
 				}
@@ -183,7 +183,8 @@
 					formatter: (val: string | number | Date) => {
 						return convertUtcToLocalDateString(new Date(val));
 					}
-				}
+				},
+				minInterval: 24 * 60 * 60 * 1000 // 1 day in ms
 			},
 			yAxis: {
 				type: 'value',
@@ -213,14 +214,16 @@
 			],
 			dataZoom: [
 				{
-					type: 'inside',
-					xAxisIndex: 0,
-					filterMode: 'none'
-				},
-				{
 					type: 'slider',
-					xAxisIndex: 0,
-					filterMode: 'none'
+					realtime: true,
+					start: 0,
+					end: 100,
+					labelFormatter: function (value: any, axisValue: string | number | Date) {
+						const date = new Date(axisValue);
+						return `${date.getFullYear()}-${(date.getMonth() + 1)
+							.toString()
+							.padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+					}
 				}
 			]
 		};

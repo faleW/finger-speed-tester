@@ -82,15 +82,16 @@
 	<p>Hit: {record.numberOfHits} per {record.periodTime} seconds</p>
 	<p>Rule: {record.amount} {record.type === 'Times' ? 'seconds' : 'clicks'}</p>
 	<p>Keys: {record.keys.join(', ')}</p>
-	<p>Test at: {record.createTime.toLocaleString()}</p>
+	<p>Created at: {record.createTime.toLocaleString()}</p>
 {/snippet}
 
 {#snippet Record(record: SpeedTesterRecord)}
 	<Tooltip.Provider>
 		<Tooltip.Root>
 			<Tooltip.Trigger
-				class="mb-1 flex h-6 w-full flex-row items-center justify-between rounded-2xl border border-transparent p-1 font-mono text-xs
-                                    hover:border-gray-300 hover:**:data-delete:block"
+				class="mb-1 flex h-6 w-full flex-row items-center justify-between rounded-2xl 
+				p-1 font-mono text-xs
+                hover:bg-secondary hover:**:data-delete:block"
 			>
 				{toLocalTimeOnly(record.createTime)} BPM: {record.bpm}
 				<Button

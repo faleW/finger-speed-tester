@@ -2,7 +2,7 @@
 	import { Button } from '../button';
 	import Separator from '../separator/separator.svelte';
 	import DayHitHistoryChart from './DayHitHistoryChart.svelte';
-	import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
+	// import TimeHitHistoryChart from './TimeHitHistoryChart.svelte';
 	let { id }: { id: string } = $props();
 	let chartType: 'day' | 'time' = $state('day');
 	import { mode } from 'mode-watcher';
@@ -32,12 +32,11 @@
 {/snippet}
 
 <div class="flex flex-1 h-full min-h-full flex-col p-2">
+	<!-- {@render chartTag()} -->
 	<div class="flex-1 h-full w-full">
 		{#key $mode}
 		{#if chartType == 'day'}
 		<DayHitHistoryChart {id} mode={$mode}/>
-		{:else}
-		<TimeHitHistoryChart {id} mode={$mode}/>
 		{/if}
 		{/key}
 	</div>

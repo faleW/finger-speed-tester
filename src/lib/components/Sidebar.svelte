@@ -22,10 +22,10 @@
 
 	function isActiveProfile(id: string) {
 		const pathId = page.url.pathname.replace('/', '');
-		return pathId ==="" && id ==="0" || pathId === id;
+		return (pathId === '' && id === '0') || pathId === id;
 	}
 
-	let testers = liveQuery(() => db.speedTester.where('id').notEqual("0").sortBy('createTime'));
+	let testers = liveQuery(() => db.speedTester.where('id').notEqual('0').sortBy('createTime'));
 
 	const addProfile = async () => {
 		try {
@@ -36,8 +36,8 @@
 				type: 'Times',
 				amount: 10,
 				createTime: new Date(),
-                updateTime: new Date(),
-                recordUpdateTime: new Date()
+				updateTime: new Date(),
+				recordUpdateTime: new Date()
 			});
 
 			await goto(`/${id}`);
@@ -116,7 +116,7 @@
 		<a
 			data-sveltekit-preload-code="off"
 			id={'sidebar-profile-' + id}
-			href={'/' + (id == "0" ? '' : id)}
+			href={'/' + (id == '0' ? '' : id)}
 			class={cn(
 				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,
@@ -124,7 +124,7 @@
 			)}
 		>
 			{name}
-			{#if id !== "0"}
+			{#if id !== '0'}
 				<DropdownMenu.Root>
 					<DropdownMenu.Trigger
 						data-menu
@@ -170,7 +170,7 @@
 	<Separator />
 	<main class="justtify-none flex flex-1 flex-col overflow-hidden px-4 py-2">
 		<div class="mb-4 flex flex-col overflow-hidden">
-			{@render Profile("0", 'Default')}
+			{@render Profile('0', 'Default')}
 			<Separator class="my-2" />
 			<div class="flex flex-row items-center justify-between px-2 text-gray-500">
 				Profile
@@ -223,7 +223,11 @@
 				<Tooltip.Provider>
 					<Tooltip.Root>
 						<Tooltip.Trigger>
-							<a href="/" class="group flex flex-nowrap gap-2 p-2">
+							<a
+								href="https://github.com/faleW/finger-speed-tester/releases"
+								target="_blank"
+								class="group flex flex-nowrap gap-2 p-2"
+							>
 								<Download class="animate-bounce" />
 								Download Desktop
 							</a>

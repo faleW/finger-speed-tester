@@ -1,7 +1,7 @@
 {
 	"name": "finger-speed-tester",
 	"private": true,
-	"version": "2.0.0",
+	"version": "1.0.0",
 	"description": "Test and record your finger speed",
 	"author": {
 		"name": "aRnio"

@@ -11,7 +11,7 @@ on:
       - 'package-lock.json'
       - 'src-tauri/Cargo.lock'
       - '.github/workflows/test-build.yml'
-  pull_request:
+  # pull_request:
   workflow_dispatch:
 
 concurrency:

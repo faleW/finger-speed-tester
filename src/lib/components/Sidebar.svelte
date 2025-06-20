@@ -41,7 +41,7 @@
 				recordUpdateTime: new Date()
 			});
 
-			await goto(`/${id}`);
+			await goto(`${base}/${id}`);
 			await tick(); // Wait for DOM update
 			setTimeout(() => {
 				// console.log('scroll sidebar');

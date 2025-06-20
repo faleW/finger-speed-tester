@@ -56,7 +56,7 @@
 		try {
 			await db.speedTesterRecord.where('testerId').equals(id).delete();
 			await db.speedTester.delete(id);
-			goto('/');
+			goto(base);
 		} catch (error) {
 			console.log(error);
 		}

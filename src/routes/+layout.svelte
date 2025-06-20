@@ -20,5 +20,5 @@
 </div>
 
 <svelte:head>
-	<title>{PageHeader.title}</title>
+	<title>Finger Speed Tester - {PageHeader.title}</title>
 </svelte:head>

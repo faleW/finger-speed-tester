@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import { Separator } from '$lib/components/ui/separator';
@@ -43,7 +44,7 @@
 			await goto(`/${id}`);
 			await tick(); // Wait for DOM update
 			setTimeout(() => {
-				console.log('scroll sidebar');
+				// console.log('scroll sidebar');
 				document.getElementById(`sidebar-profile-${id}`)?.scrollIntoView({ behavior: 'smooth' });
 			}, 100);
 		} catch (error) {
@@ -75,7 +76,7 @@
 		try {
 			const newName: string | undefined = event.target.value;
 			if (newName && newName !== '') {
-				console.log('newName', newName);
+				// console.log('newName', newName);
 				db.speedTester.update(id, {
 					name: newName.trim()
 				});
@@ -116,7 +117,7 @@
 		<a
 			data-sveltekit-preload-code="off"
 			id={'sidebar-profile-' + id}
-			href={'/' + (id == '0' ? '' : id)}
+			href={ base + "/" + (id == '0' ? '' : id)}
 			class={cn(
 				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,

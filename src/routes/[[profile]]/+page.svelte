@@ -9,7 +9,7 @@
 	import { db } from '$lib/model/db.js';
 	import type { Observable, Subscription } from 'dexie';
 	import { liveQuery } from 'dexie';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	let { data } = $props();
 	let subscription: Subscription;
 	$effect(() => {
@@ -25,7 +25,7 @@
 			},
 			error: (error) => console.error(error)
 		});
-		// console.log('+page.svelte $effect', data.tester?.name);
+		PageHeader.title = data.tester?.name ?? PageHeader.title;
 	});
 
 	onMount(()=> {
@@ -33,6 +33,10 @@
 		setTimeout(() => {
 			document.getElementById(`sidebar-profile-${id}`)?.scrollIntoView({ behavior: 'smooth' });
 		}, 100);
+	})
+
+	onDestroy(() => {
+		if (subscription) subscription.unsubscribe();
 	})
 </script>
 

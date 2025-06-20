@@ -54,7 +54,7 @@
 				});
 			});
 			items = dataObject;
-			console.log(items.length);
+			// console.log(items.length);
 		},
 		error: (error) => console.error(error)
 	});

@@ -22,7 +22,7 @@
 	let updateLock: Promise<void> | null = null;
 
 	function isActiveProfile(id: string) {
-		const pathId = page.url.pathname.replace('/', '');
+		const pathId = page.url.pathname.replace(`${base}/`, '');
 		return (pathId === '' && id === '0') || pathId === id;
 	}
 

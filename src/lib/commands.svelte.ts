@@ -67,3 +67,24 @@ class PageHeaderClass {
 }
 
 export const PageHeader = new PageHeaderClass();
+
+const ENABLE_HIT_SOUND : string = "ENABLE_HIT_SOUND";
+class GlobalSettingClass{
+    enableHitSound : boolean = $state(true);
+    constructor(){
+            const enableHitSoundStr = localStorage.getItem(ENABLE_HIT_SOUND) || '' ;
+            if(enableHitSoundStr == ''){
+                localStorage.setItem(ENABLE_HIT_SOUND, "true");
+            }else if(enableHitSoundStr != "true"){
+                this.enableHitSound = false;
+            }
+    }
+
+    toggleHitSound(){
+        this.enableHitSound = !this.enableHitSound;
+        if(this.enableHitSound) localStorage.setItem(ENABLE_HIT_SOUND, "true");
+        else localStorage.setItem(ENABLE_HIT_SOUND, "false");
+    }
+}
+
+export const GlobalSetting = new GlobalSettingClass();

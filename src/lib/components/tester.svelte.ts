@@ -3,7 +3,10 @@ import { linear } from "svelte/easing";
 import type { BpmTime } from "./ui/bpm-time-line-chart";
 import type { HitType, SpeedTester } from "$lib/model/speed-tester";
 import { db } from "$lib/model/db";
-
+import { Sound } from "svelte-sound";
+import { base } from '$app/paths';
+import osuHitSound from "$lib/assets/osu-hit-sound.mp3";
+import { GlobalSetting } from "$lib/commands.svelte";
 export class ClickableKeyInput {
     key: string = $state("");
     count: number = $state(0)
@@ -43,6 +46,7 @@ export class Tester {
     bpm: string = $state("0");
     currTime: string = $state("0.00");
     bpmTimes: BpmTime[] = $state([]);
+    hitSound: Sound;
     private startTime: number = 0;
     private timesTimerId?: number;
     private gameTimerId?: number;
@@ -74,6 +78,7 @@ export class Tester {
                 });
         });
 
+        this.hitSound = new Sound(osuHitSound);
     }
 
     initTest() {
@@ -200,6 +205,7 @@ export class Tester {
             if (!this.isRunning) this.startTest();
             keyToUpdate.count++;
             this.hitCount++;
+            if(GlobalSetting.enableHitSound) this.hitSound.play();
             const elapsedSeconds = (Date.now() - this.startTime) / 1000;
             this.records.push({
                 key: key,

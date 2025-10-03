@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { base } from '$app/paths';
+	import { base } from '$app/paths';
 	import { page } from '$app/state';
 	import DarkModeToggle from '$lib/components/DarkModeToggle.svelte';
 	import { Separator } from '$lib/components/ui/separator';
@@ -10,13 +10,30 @@
 	import ScrollArea from '$lib/components/ui/scroll-area/scroll-area.svelte';
 	import { goto } from '$app/navigation';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Delete, Download, Ellipsis, Info, Pencil } from '@lucide/svelte';
+	import {
+		Delete,
+		Download,
+		Ellipsis,
+		Info,
+		MoonIcon,
+		Pencil,
+		Settings,
+		SunIcon,
+
+		Volume2,
+
+		VolumeOff
+
+
+	} from '@lucide/svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { onMount, tick } from 'svelte';
 	import { isTauri } from '@tauri-apps/api/core';
 	import OsuLogo from './OsuLogo.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { v4 as uuidv4 } from 'uuid';
+	import { toggleMode } from 'mode-watcher';
+	import { GlobalSetting } from '$lib/commands.svelte';
 
 	let renameId: string | undefined = $state();
 	let updateLock: Promise<void> | null = null;
@@ -117,7 +134,7 @@
 		<a
 			data-sveltekit-preload-code="off"
 			id={'sidebar-profile-' + id}
-			href={ base + "/" + (id == '0' ? '' : id)}
+			href={base + '/' + (id == '0' ? '' : id)}
 			class={cn(
 				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,
@@ -160,13 +177,44 @@
 		</a>
 	{/if}
 {/snippet}
+{#snippet sideBarDropDown()}
+	<DropdownMenu.Root>
+		<DropdownMenu.Trigger
+			data-menu
+			class={cn(
+				buttonVariants({ variant: 'ghost' }),
+				`cursor-pointer items-center justify-center`
+			)}
+		>
+			<Settings />
+		</DropdownMenu.Trigger>
+		<DropdownMenu.Content
+			class="w-auto group-hover:block group-focus:block"
+			onCloseAutoFocus={(event) => event.preventDefault()}
+		>
+			<DropdownMenu.Item class="cursor-pointer" onclick={()=>GlobalSetting.toggleHitSound()}>
+				{#if GlobalSetting.enableHitSound}
+				<VolumeOff /> Mute Hitsound
+				{:else}
+				<Volume2 /> Open Hitsound
+				{/if}
+			</DropdownMenu.Item>
+			<DropdownMenu.Item class="cursor-pointer" onclick={() => toggleMode()}>
+				<!-- <DarkModeToggle enableText={true}/> -->
+				<SunIcon class="h-[1.2rem] w-[1.2rem] dark:hidden" />
+				<MoonIcon class="hidden h-[1.2rem] w-[1.2rem] dark:block" />
+				<span class="">Toggle theme</span>
+			</DropdownMenu.Item>
+		</DropdownMenu.Content>
+	</DropdownMenu.Root>
+{/snippet}
 <div
 	class="bg-sidebar text-sidebar-foreground m-0 flex h-full w-56 min-w-56 flex-col justify-between overflow-hidden"
 >
 	<header class="flex flex-row gap-x-1 p-1">
 		<div class="w-full flex-1 self-center text-center">Finger Speed Tester</div>
 		<Separator orientation="vertical" />
-		<DarkModeToggle />
+		{@render sideBarDropDown()}
 	</header>
 	<Separator />
 	<main class="justtify-none flex flex-1 flex-col overflow-hidden px-4 py-2">

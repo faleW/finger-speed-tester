@@ -49,6 +49,8 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
       - name: Build Tauri
+        env:
+          BASE_PATH: /finger-speed-tester
         run: pnpm tauri build
       - name: Upload Artifacts
         uses: actions/upload-pages-artifact@v3

@@ -5,7 +5,6 @@ import type { HitType, SpeedTester } from "$lib/model/speed-tester";
 import { db } from "$lib/model/db";
 import { Sound } from "svelte-sound";
 import { base } from '$app/paths';
-import osuHitSound from "$lib/assets/osu-hit-sound.mp3";
 import { GlobalSetting } from "$lib/commands.svelte";
 export class ClickableKeyInput {
     key: string = $state("");
@@ -49,7 +48,7 @@ export class Tester {
     bpmTimes: BpmTime[] = $state([]);
     timeDiffs: number[] = $state([]);
     clickTimes: number[] = $state([]);
-    hitSound: Sound;
+    hitSound: Sound | null = null;
     private startTime: number = 0;
     private timesTimerId?: number;
     private gameTimerId?: number;
@@ -81,7 +80,15 @@ export class Tester {
                 });
         });
 
-        this.hitSound = new Sound(osuHitSound);
+        // Initialize hit sound with error handling for production environments
+        // File is in static/ folder, accessible at /finger-speed-tester/osu-hit-sound.mp3
+        try {
+            const soundPath = `${base}/osu-hit-sound.mp3`;
+            this.hitSound = new Sound(soundPath);
+        } catch (error) {
+            console.warn('Failed to initialize hit sound:', error);
+            this.hitSound = null;
+        }
     }
 
     initTest() {
@@ -236,7 +243,15 @@ export class Tester {
             if (!this.isRunning) this.startTest();
             keyToUpdate.count++;
             this.hitCount++;
-            if(GlobalSetting.enableHitSound) this.hitSound.play();
+            // Play hit sound with error handling to prevent breaking other functions
+            if(GlobalSetting.enableHitSound && this.hitSound) {
+                try {
+                    this.hitSound.play();
+                } catch (error) {
+                    // Silently fail - don't break the game if sound fails
+                    console.warn('Failed to play hit sound:', error);
+                }
+            }
             const now = Date.now();
             const elapsedSeconds = (now - this.startTime) / 1000;
             this.clickTimes.push(now);

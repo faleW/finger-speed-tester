@@ -83,11 +83,15 @@ export class Tester {
         // Initialize hit sound with error handling for production environments
         // File is in static/ folder, accessible at /finger-speed-tester/osu-hit-sound.mp3
         try {
-            // Handle both cases: with base path and without (for local dev)
+            // Construct full URL for the sound file
+            // Use window.location.origin to get the current origin (works in both dev and production)
             const basePath = base || '';
-            const soundPath = `${basePath}/osu-hit-sound.mp3`.replace(/\/+/g, '/'); // Remove double slashes
-            console.log('Initializing sound at:', soundPath, '(base:', base, ')');
-            this.hitSound = new Sound(soundPath);
+            const relativePath = `${basePath}/osu-hit-sound.mp3`.replace(/\/+/g, '/'); // Remove double slashes
+            const soundUrl = typeof window !== 'undefined' 
+                ? `${window.location.origin}${relativePath}`
+                : relativePath; // Fallback for SSR
+            console.log('Initializing sound at:', soundUrl, '(base:', base, ')');
+            this.hitSound = new Sound(soundUrl);
         } catch (error) {
             console.warn('Failed to initialize hit sound:', error);
             this.hitSound = null;

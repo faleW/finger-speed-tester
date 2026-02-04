@@ -4,7 +4,7 @@
 	import HelloWorld from '$lib/components/HelloWorld.svelte';
 	import HistoricalRecordList from '$lib/components/HistoricalRecordList.svelte';
 	import SpeedTester from '$lib/components/SpeedTesterUI.svelte';
-	import HitHistoryChart from '$lib/components/ui/history-chart/HitHistoryChart.svelte';
+	import { HitHistoryChart } from '$lib/components/ui/history-chart';
 	import Separator from '$lib/components/ui/separator/separator.svelte';
 	import { db } from '$lib/model/db.js';
 	import type { Observable, Subscription } from 'dexie';

@@ -2,11 +2,13 @@
 	import { PageHeader } from '$lib/commands.svelte';
 	import Sidebar from '$lib/components/Sidebar.svelte';
 	import { Separator } from '$lib/components/ui/separator';
+	import { TooltipProvider } from '$lib/components/ui/tooltip';
 	import '../app.css';
 	let { children } = $props();
 	import { ModeWatcher } from 'mode-watcher';
 </script>
 
+<TooltipProvider>
 <div  style="font-family: 'Roboto', sans-serif;" class="flex h-screen min-h-screen w-full flex-row overflow-hidden select-none font-normal">
 	<Sidebar />
 	<ModeWatcher />
@@ -18,6 +20,7 @@
 		{@render children?.()}
 	</main>
 </div>
+</TooltipProvider>
 
 <svelte:head>
 	<title>Finger Speed Tester - {PageHeader.title}</title>

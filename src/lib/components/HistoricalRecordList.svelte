@@ -78,11 +78,34 @@
 </script>
 
 {#snippet TesterInfo(record: SpeedTesterRecord)}
-	<p>BPM: {record.bpm}</p>
-	<p>Hit: {record.numberOfHits} per {record.periodTime} seconds</p>
-	<p>Rule: {record.amount} {record.type === 'Times' ? 'seconds' : 'clicks'}</p>
-	<p>Keys: {record.keys.join(', ')}</p>
-	<p>Created at: {record.createTime.toLocaleString()}</p>
+	<table class="w-full border-collapse">
+		<tbody>
+			<tr>
+				<td class="pr-4 font-semibold text-right">BPM</td>
+				<td>{record.bpm}</td>
+			</tr>
+			<tr>
+				<td class="pr-4 font-semibold text-right">Hit</td>
+				<td>{record.numberOfHits} per {record.periodTime} seconds</td>
+			</tr>
+			<tr>
+				<td class="pr-4 font-semibold text-right">Rule</td>
+				<td>{record.amount} {record.type === 'Times' ? 'seconds' : 'clicks'}</td>
+			</tr>
+			<tr>
+				<td class="pr-4 font-semibold text-right">UR</td>
+				<td>{record.unstableRate ?? "---"}</td>
+			</tr>
+			<tr>
+				<td class="pr-4 font-semibold text-right">Keys</td>
+				<td>{record.keys.join(', ')}</td>
+			</tr>
+			<tr>
+				<td class="pr-4 font-semibold text-right">Created at</td>
+				<td>{record.createTime.toLocaleString()}</td>
+			</tr>
+		</tbody>
+	</table>
 {/snippet}
 
 {#snippet Record(record: SpeedTesterRecord)}

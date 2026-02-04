@@ -45,7 +45,10 @@ export class Tester {
     rule: TestRule;
     bpm: string = $state("0");
     currTime: string = $state("0.00");
+    unstableRate: string = $state("0.00");
     bpmTimes: BpmTime[] = $state([]);
+    timeDiffs: number[] = $state([]);
+    clickTimes: number[] = $state([]);
     hitSound: Sound;
     private startTime: number = 0;
     private timesTimerId?: number;
@@ -96,6 +99,9 @@ export class Tester {
         this.startTime = Date.now();
         if (this.rule.type === "Times")
             this.timesTimerId = window.setTimeout(() => this.finishTest(), this.rule.amount * 1000);
+        this.clickTimes = [];
+        this.timeDiffs = [];
+        this.unstableRate = "0.00";
 
         this.startGameInterval();
     }
@@ -118,6 +124,31 @@ export class Tester {
 
         this.bpm = bpm.toFixed(0);
         this.currTime = elapsedSeconds.toFixed(2);
+        this.unstableRate = this.calculateUR().toFixed(2);
+    }
+
+    /**
+     * Calculate Unstable Rate (UR) - measures consistency of tapping rhythm
+     * 
+     * Algorithm:
+     * 1. Use linear regression to find the "best fit" line through hit times
+     *    This represents the ideal consistent tapping pattern
+     * 2. Calculate the deviation (error) of each actual hit from this line
+     * 3. UR = Standard Deviation of errors × 10
+     * 
+     * Lower UR = more consistent timing
+     */
+    calculateUR(): number {
+        if (this.timeDiffs.length < 2) return 0;
+        // Calculate errors (deviation from best fit line)
+        // For least squares regression, mean error is always 0
+        // So variance = mean of squared errors
+        let sum = this.timeDiffs.reduce(function(a, b){return a + b});
+        let avg = sum / this.timeDiffs.length;
+        let variance = this.timeDiffs.reduce(function(a, b){return a + Math.pow(b - avg, 2)});
+        const stdDev = Math.sqrt(variance / this.timeDiffs.length);
+        // UR = standard deviation × 10
+        return stdDev * 10;
     }
 
     finishTest() {
@@ -144,7 +175,7 @@ export class Tester {
             periodTime: Number(this.currTime),
             numberOfHits: this.hitCount,
             bpm: Number(this.bpm),
-            unstableRate: 0
+            unstableRate: Number(this.unstableRate)
         });
     }
 
@@ -206,12 +237,18 @@ export class Tester {
             keyToUpdate.count++;
             this.hitCount++;
             if(GlobalSetting.enableHitSound) this.hitSound.play();
-            const elapsedSeconds = (Date.now() - this.startTime) / 1000;
+            const now = Date.now();
+            const elapsedSeconds = (now - this.startTime) / 1000;
+            this.clickTimes.push(now);
             this.records.push({
                 key: key,
                 time: elapsedSeconds,
                 bpm: (elapsedSeconds == 0) ? 0 : this.hitCount / elapsedSeconds * 60 / 4
             });
+            if (this.records.length > 1)
+                this.timeDiffs.push(this.clickTimes[this.clickTimes.length - 1] - this.clickTimes[this.clickTimes.length - 2]);
+            else
+                this.timeDiffs.push(0);
             this.updateGameState();
             if (this.rule.type === "Clicks" && this.hitCount === this.rule.amount) this.finishTest();
         }

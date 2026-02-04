@@ -10,6 +10,7 @@
 	import { liveQuery } from 'dexie';
 	import { db } from '$lib/model/db';
 	import { cn } from '$lib/utils';
+	import * as Tooltip from '$lib/components/ui/tooltip';
 
 	let { tester }: { tester: SpeedTester } = $props();
 
@@ -224,11 +225,20 @@
 	<div class="flex h-full w-full flex-col overflow-hidden">
 		<div class="flex w-full flex-row justify-around text-center text-xl">
 			<div>
-				Average Bpm {testerState.bpm}
+				Average BPM {testerState.bpm}
 			</div>
-			<div>
-				{testerState.hitCount} taps in {testerState.currTime} seconds
-			</div>
+			<Tooltip.Root>
+				<Tooltip.Trigger class="cursor-help underline decoration-dotted underline-offset-4">
+					UR {testerState.unstableRate}
+				</Tooltip.Trigger>
+				<Tooltip.Content class="max-w-xs">
+					<p><strong>Unstable Rate</strong> measures timing consistency.</p>
+					<p class="mt-1">Lower = more consistent. Typical values: 50-150 (good), 150-250 (average), 250+ (inconsistent)</p>
+				</Tooltip.Content>
+			</Tooltip.Root>
+		</div>
+		<div class="text-center text-sm text-gray-500 dark:text-gray-400">
+			{testerState.hitCount} taps in {testerState.currTime} seconds
 		</div>
 		<div class="w-full flex-1">
 			{#key $mode}

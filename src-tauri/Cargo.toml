@@ -1,6 +1,6 @@
 [package]
 name = "finger-speed-tester"
-version = "1.0.2"
+version = "1.0.3"
 description = "Test and record your finger speed."
 authors = ["aRnio"]
 license = "MIT"

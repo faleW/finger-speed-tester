@@ -1,11 +1,10 @@
 import { Previous, watch } from "runed";
-import { linear } from "svelte/easing";
 import type { BpmTime } from "./ui/bpm-time-line-chart";
 import type { HitType, SpeedTester } from "$lib/model/speed-tester";
 import { db } from "$lib/model/db";
-import { Sound } from "svelte-sound";
 import { base } from '$app/paths';
 import { GlobalSetting } from "$lib/commands.svelte";
+import { HitSound } from "$lib/components/HitSound";
 export class ClickableKeyInput {
     key: string = $state("");
     count: number = $state(0)
@@ -48,11 +47,11 @@ export class Tester {
     bpmTimes: BpmTime[] = $state([]);
     timeDiffs: number[] = $state([]);
     clickTimes: number[] = $state([]);
-    hitSound: Sound | null = null;
     private soundReady: Promise<void> | null = null;
     private startTime: number = 0;
     private timesTimerId?: number;
     private gameTimerId?: number;
+    private hitSound: HitSound | null = null;
     constructor(speedTester?: SpeedTester) {
         this.id = speedTester?.id ?? "0";
         this.name = speedTester?.name ?? "Default";
@@ -80,53 +79,15 @@ export class Tester {
                     amount: this.rule.amount
                 });
         });
-
-        // Sound will be initialized lazily when first needed
     }
 
-    /**
-     * Ensures the sound is ready to play. Initializes it lazily if not already initialized.
-     * @returns true if sound is ready, false if initialization failed
-     */
-    private async ensureSoundReady(): Promise<boolean> {
-        // If sound is already initialized, return true
-        if (this.hitSound) {
-            return true;
-        }
-
-        // If initialization is in progress, wait for it
-        if (this.soundReady) {
-            await this.soundReady;
-            return this.hitSound !== null;
-        }
-
-        // Start lazy initialization
-        this.soundReady = this.initializeSound();
-        await this.soundReady;
-        return this.hitSound !== null;
-    }
-
-    /**
-     * Plays the hit sound asynchronously without blocking the game.
-     * This method doesn't block and will play the sound when ready.
-     */
-    private playHitSoundAsync(): void {
+    private async playHitSoundAsync(): Promise<void> {
         // Fire and forget - don't block the game
         if(GlobalSetting.enableHitSound) {
-            // Start async sound initialization and playback without awaiting
-            this.ensureSoundReady().then((ready) => {
-                if (ready && this.hitSound) {
-                    try {
-                        this.hitSound.play();
-                    } catch (error) {
-                        // Silently fail - don't break the game if sound fails
-                        console.warn('Failed to play hit sound:', error);
-                    }
-                }
-            }).catch((error) => {
-                // Silently fail - don't break the game if sound fails
-                console.warn('Failed to initialize or play hit sound:', error);
-            });
+            if(!this.hitSound) {
+                this.initializeSound();
+            }
+            await this.hitSound?.play();
         }
     }
 
@@ -143,13 +104,10 @@ export class Tester {
             const soundUrl = typeof window !== 'undefined' 
                 ? `${window.location.origin}${relativePath}`
                 : relativePath; // Fallback for SSR
-            
             console.log('Initializing sound at:', soundUrl, '(base:', base, ')');
             
-            this.hitSound = new Sound(soundUrl);
+            this.hitSound = new HitSound(soundUrl);
             
-            // Give Howler.js time to initialize the sound asynchronously
-            // The create() method is async, so we need to wait a bit
             await new Promise(resolve => setTimeout(resolve, 200));
             
             // Verify the sound was created successfully

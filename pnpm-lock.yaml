@@ -23,15 +23,15 @@ importers:
       echarts:
         specifier: ^5.6.0
         version: 5.6.0
+      howler:
+        specifier: ^2.2.4
+        version: 2.2.4
       mode-watcher:
         specifier: 0.5.1
         version: 0.5.1(svelte@5.33.10)
       runed:
         specifier: ^0.28.0
         version: 0.28.0(svelte@5.33.10)
-      svelte-sound:
-        specifier: ^0.6.0
-        version: 0.6.0
       svelte-virtual-scroll-list:
         specifier: ^1.3.0
         version: 1.3.0(svelte@5.33.10)
@@ -69,6 +69,9 @@ importers:
       '@tsconfig/svelte':
         specifier: ^5.0.4
         version: 5.0.4
+      '@types/howler':
+        specifier: ^2.2.12
+        version: 2.2.12
       '@types/node':
         specifier: ^24.0.3
         version: 24.0.3
@@ -707,6 +710,9 @@ packages:
 
   '@types/estree@1.0.7':
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
+
+  '@types/howler@2.2.12':
+    resolution: {integrity: sha512-hy769UICzOSdK0Kn1FBk4gN+lswcj1EKRkmiDtMkUGvFfYJzgaDXmVXkSShS2m89ERAatGIPnTUlp2HhfkVo5g==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -1474,9 +1480,6 @@ packages:
       svelte:
         optional: true
 
-  svelte-sound@0.6.0:
-    resolution: {integrity: sha512-n0JJwWwNEmsGntSN9oe57yevHrIg8Lw3tW2XsfdrDhJXwrbAAmLvbBJQ0Z3TFqONUW7+OWb5Yx04CSCo7q56fA==}
-
   svelte-toolbelt@0.9.1:
     resolution: {integrity: sha512-wBX6MtYw/kpht80j5zLpxJyR9soLizXPIAIWEVd9llAi17SR44ZdG291bldjB7r/K5duC0opDFcuhk2cA1hb8g==}
     engines: {node: '>=18', pnpm: '>=8.7.0'}
@@ -2092,6 +2095,8 @@ snapshots:
   '@types/cookie@0.6.0': {}
 
   '@types/estree@1.0.7': {}
+
+  '@types/howler@2.2.12': {}
 
   '@types/json-schema@7.0.15': {}
 
@@ -2811,10 +2816,6 @@ snapshots:
       postcss-selector-parser: 7.1.0
     optionalDependencies:
       svelte: 5.33.10
-
-  svelte-sound@0.6.0:
-    dependencies:
-      howler: 2.2.4
 
   svelte-toolbelt@0.9.1(svelte@5.33.10):
     dependencies:

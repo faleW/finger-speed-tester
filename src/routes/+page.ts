@@ -3,11 +3,12 @@ import type { PageLoad } from "./$types";
 import { liveQuery } from "dexie";
 import { db } from "$lib/model/db";
 import type { SpeedTester } from "$lib/model/speed-tester";
-export const load: PageLoad = async ({ params }) => {
 
-    let id: string = params.profile ?? "";
+export const load: PageLoad = async ({ url }) => {
+    // Get profile ID from query parameter instead of route parameter
+    let id: string = url.searchParams.get("profile") ?? "";
 
-    // console.log("Page load, id",id)
+    // console.log("Page load, id", id)
 
     // add default setting
     if (id === "") {

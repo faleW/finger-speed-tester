@@ -97,7 +97,21 @@
 				avgBpmSeries.push([date, item.averageBpm]);
 				countSeries.push([date, item.count]);
 			});
+			
+			// Calculate label interval based on data size to prevent overlap
+			// Show max 10-12 labels, adjust interval accordingly
+			const maxLabels = 10;
+			const dataLength = data.length;
+			// For time axis, interval is index-based (0 = auto, N = show every Nth label)
+			const labelInterval = dataLength > maxLabels ? Math.floor(dataLength / maxLabels) : 0;
+			
 			myChart.setOption({
+				xAxis: {
+					axisLabel: {
+						interval: labelInterval, // Show every Nth label to prevent overlap
+						// Keep rotation and other settings from initial config
+					}
+				},
 				series: [
 					{
 						name: 'Min',
@@ -182,9 +196,21 @@
 				axisLabel: {
 					formatter: (val: string | number | Date) => {
 						return convertUtcToLocalDateString(new Date(val));
-					}
+					},
+					interval: 0, // Will be auto-calculated based on available space
+					// Show fewer labels when there are many dates
+					showMinLabel: true,
+					showMaxLabel: true
 				},
-				minInterval: 24 * 60 * 60 * 1000 // 1 day in ms
+				minInterval: 24 * 60 * 60 * 1000, // 1 day in ms
+				// Automatically adjust label interval based on data density
+				axisPointer: {
+					label: {
+						formatter: (params: any) => {
+							return convertUtcToLocalDateString(new Date(params.value));
+						}
+					}
+				}
 			},
 			yAxis: {
 				type: 'value',

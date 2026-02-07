@@ -56,6 +56,50 @@
 		averageBpm: number;
 		count: number;
 	};
+
+	/**
+	 * Linear regression: finds the best-fit line y = slope * x + intercept
+	 * Returns an array of [x, y] points for the trendline endpoints.
+	 */
+	function linearRegression(points: number[][]): { slope: number; intercept: number } {
+		const n = points.length;
+		if (n < 2) return { slope: 0, intercept: 0 };
+
+		let sumX = 0, sumY = 0, sumXY = 0, sumX2 = 0;
+		for (const [x, y] of points) {
+			sumX += x;
+			sumY += y;
+			sumXY += x * y;
+			sumX2 += x * x;
+		}
+		const denom = n * sumX2 - sumX * sumX;
+		if (denom === 0) return { slope: 0, intercept: sumY / n };
+
+		const slope = (n * sumXY - sumX * sumY) / denom;
+		const intercept = (sumY - slope * sumX) / n;
+		return { slope, intercept };
+	}
+
+	/**
+	 * Moving average with a given window size.
+	 * For each point, averages the surrounding window of values.
+	 */
+	function movingAverage(points: number[][], windowSize: number): number[][] {
+		const result: number[][] = [];
+		const half = Math.floor(windowSize / 2);
+		for (let i = 0; i < points.length; i++) {
+			const start = Math.max(0, i - half);
+			const end = Math.min(points.length - 1, i + half);
+			let sum = 0;
+			let count = 0;
+			for (let j = start; j <= end; j++) {
+				sum += points[j][1];
+				count++;
+			}
+			result.push([points[i][0], Math.round((sum / count) * 100) / 100]);
+		}
+		return result;
+	}
 	let { id, mode }: { id: string; mode: ThemeMode } = $props();
 	let data: DataType[];
 
@@ -87,29 +131,55 @@
 			const countSeries: BpmSeriesType = [];
 
 			data.forEach((item) => {
-				// const date = toUtcMidnight(item.date).getTime();
-
 				const date = toMidnight(item.date).getTime();
-				// const parts = item.date.split('-').map(Number); // [2025, 6, 7]
-				// const date = Date.UTC(parts[0], parts[1] - 1, parts[2]); // Month is 0-based
 				minBpmSeries.push([date, item.minBpm]);
 				maxBpmSeries.push([date, item.maxBpm]);
 				avgBpmSeries.push([date, item.averageBpm]);
 				countSeries.push([date, item.count]);
 			});
-			
+
+			// Cast to number[][] since all values are timestamps (numbers) from getTime()
+			const maxBpmNumeric = maxBpmSeries as number[][];
+
+			// --- Trendline (Linear Regression on Max BPM) ---
+			// Normalize x values for numerical stability
+			const trendlineSeries: number[][] = [];
+			if (maxBpmNumeric.length >= 2) {
+				const xMin = maxBpmNumeric[0][0];
+				const xMax = maxBpmNumeric[maxBpmNumeric.length - 1][0];
+				const normalized = maxBpmNumeric.map(([x, y]) => [(x - xMin) / (xMax - xMin || 1), y]);
+				const { slope, intercept } = linearRegression(normalized);
+
+				// Generate trendline points at each data x
+				for (const [x] of maxBpmNumeric) {
+					const nx = (x - xMin) / (xMax - xMin || 1);
+					trendlineSeries.push([x, Math.round((slope * nx + intercept) * 100) / 100]);
+				}
+			}
+
+			// --- Moving Average on Max BPM (window = ~30% of data or min 3) ---
+			const windowSize = Math.max(3, Math.round(maxBpmNumeric.length * 0.3));
+			const movingAvgSeries = movingAverage(maxBpmNumeric, windowSize);
+
+			// --- BPM improvement annotation ---
+			let improvementText = '';
+			if (trendlineSeries.length >= 2) {
+				const startBpm = trendlineSeries[0][1];
+				const endBpm = trendlineSeries[trendlineSeries.length - 1][1];
+				const delta = endBpm - startBpm;
+				const sign = delta >= 0 ? '+' : '';
+				improvementText = `${sign}${delta.toFixed(1)} BPM`;
+			}
+
 			// Calculate label interval based on data size to prevent overlap
-			// Show max 10-12 labels, adjust interval accordingly
 			const maxLabels = 10;
 			const dataLength = data.length;
-			// For time axis, interval is index-based (0 = auto, N = show every Nth label)
 			const labelInterval = dataLength > maxLabels ? Math.floor(dataLength / maxLabels) : 0;
-			
+
 			myChart.setOption({
 				xAxis: {
 					axisLabel: {
-						interval: labelInterval, // Show every Nth label to prevent overlap
-						// Keep rotation and other settings from initial config
+						interval: labelInterval
 					}
 				},
 				series: [
@@ -132,6 +202,26 @@
 						name: 'Play Count',
 						type: 'line',
 						data: countSeries
+					},
+					{
+						name: 'Trend (Max)',
+						type: 'line',
+						data: trendlineSeries,
+						markLine: trendlineSeries.length >= 2 ? {
+							silent: true,
+							symbol: 'none',
+							lineStyle: { type: 'dashed', color: '#888', width: 1 },
+							label: { show: true, position: 'end', formatter: improvementText, fontSize: 12, fontWeight: 'bold' },
+							data: [[
+								{ coord: [trendlineSeries[0][0], trendlineSeries[0][1]] },
+								{ coord: [trendlineSeries[trendlineSeries.length - 1][0], trendlineSeries[trendlineSeries.length - 1][1]] }
+							]]
+						} : undefined
+					},
+					{
+						name: 'Moving Avg (Max)',
+						type: 'line',
+						data: movingAvgSeries
 					}
 				]
 			});
@@ -179,12 +269,14 @@
 				}
 			},
 			legend: {
-				// selected: {
-				// 	Min: false,
-				// 	Max: true,
-				// 	Average: false,
-				// 	'Play Count': false
-				// }
+				selected: {
+					Min: false,
+					Max: true,
+					Average: false,
+					'Play Count': true,
+					'Trend (Max)': true,
+					'Moving Avg (Max)': false
+				}
 			},
 			toolbox: {
 				// feature: {
@@ -236,6 +328,30 @@
 					name: 'Play Count',
 					type: 'line',
 					smooth: true
+				},
+				{
+					name: 'Trend (Max)',
+					type: 'line',
+					smooth: false,
+					showSymbol: false,
+					lineStyle: {
+						type: 'dashed',
+						width: 2,
+						opacity: 0.7
+					},
+					itemStyle: {
+						opacity: 0
+					}
+				},
+				{
+					name: 'Moving Avg (Max)',
+					type: 'line',
+					smooth: true,
+					showSymbol: false,
+					lineStyle: {
+						width: 3,
+						opacity: 0.85
+					}
 				}
 			],
 			dataZoom: [

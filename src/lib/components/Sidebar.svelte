@@ -39,8 +39,8 @@
 	let updateLock: Promise<void> | null = null;
 
 	function isActiveProfile(id: string) {
-		const pathId = page.url.pathname.replace(`${base}/`, '');
-		return (pathId === '' && id === '0') || pathId === id;
+		const profileId = page.url.searchParams.get('profile') ?? '';
+		return (profileId === '' && id === '0') || profileId === id;
 	}
 
 	let testers = liveQuery(() => db.speedTester.where('id').notEqual('0').sortBy('createTime'));
@@ -58,7 +58,7 @@
 				recordUpdateTime: new Date()
 			});
 
-			await goto(`${base}/${id}`);
+			await goto(`${base}?profile=${id}`);
 			await tick(); // Wait for DOM update
 			setTimeout(() => {
 				// console.log('scroll sidebar');
@@ -73,6 +73,7 @@
 		try {
 			await db.speedTesterRecord.where('testerId').equals(id).delete();
 			await db.speedTester.delete(id);
+			// Navigate to base without profile query param (shows default)
 			goto(base);
 		} catch (error) {
 			console.log(error);
@@ -134,7 +135,7 @@
 		<a
 			data-sveltekit-preload-code="off"
 			id={'sidebar-profile-' + id}
-			href={base + '/' + (id == '0' ? '' : id)}
+			href={base + `?profile=${id}`}
 			class={cn(
 				`hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group relative flex w-full 
 			items-center justify-between rounded-md p-2`,

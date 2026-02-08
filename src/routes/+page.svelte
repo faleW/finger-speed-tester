@@ -10,6 +10,8 @@
 	import type { Observable, Subscription } from 'dexie';
 	import { liveQuery } from 'dexie';
 	import { onDestroy, onMount } from 'svelte';
+	import { generateTestData } from '$lib/scripts/generate-test-data';
+	import Button from '$lib/components/ui/button/button.svelte';
 	let { data } = $props();
 	let subscription: Subscription;
 	$effect(() => {
@@ -35,6 +37,20 @@
 		}, 100);
 	})
 
+	let generating = $state(false);
+	const handleGenerateTestData = async () => {
+		generating = true;
+		try {
+			await generateTestData();
+			alert('Test data generated successfully!');
+		} catch (error) {
+			console.error('Error generating test data:', error);
+			alert('Error generating test data. Check console for details.');
+		} finally {
+			generating = false;
+		}
+	};
+
 	onDestroy(() => {
 		if (subscription) subscription.unsubscribe();
 	})
@@ -46,8 +62,20 @@
 			<!-- Loading -->
 		{:then tester}
 			{#if tester}
-				<!-- <div>{tester.name}</div> -->
 				<SpeedTester {tester}></SpeedTester>
+				<!-- Temporary button to generate test data - remove after use -->
+				{#if tester.id === '9891bb74-ff71-401a-a6c9-378cf5e2bce5'}
+					<div class="absolute top-0 right-0 z-10">
+						<Button 
+							onclick={handleGenerateTestData} 
+							disabled={generating}
+							variant="outline"
+							class="cursor-pointer text-xs"
+						>
+							{generating ? 'Generating...' : 'Generate Test Data'}
+						</Button>
+					</div>
+				{/if}
 			{:else}
 				Error
 			{/if}

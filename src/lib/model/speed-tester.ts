@@ -9,6 +9,7 @@ export interface SpeedTester {
     createTime: Date;
     updateTime: Date;
     recordUpdateTime: Date;
+    order?: number; // Optional order field for custom sorting
 }
 export interface SpeedTesterRecord {
     recordId: number;

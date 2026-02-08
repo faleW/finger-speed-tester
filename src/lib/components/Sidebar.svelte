@@ -19,13 +19,11 @@
 		Pencil,
 		Settings,
 		SunIcon,
-
 		Volume2,
-
-		VolumeOff
-
-
+		VolumeOff,
+		ArrowUpDown
 	} from '@lucide/svelte';
+	import ReorderProfilesDialog from './ReorderProfilesDialog.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { onMount, tick } from 'svelte';
 	import { isTauri } from '@tauri-apps/api/core';
@@ -37,16 +35,33 @@
 
 	let renameId: string | undefined = $state();
 	let updateLock: Promise<void> | null = null;
+	let reorderDialogOpen = $state(false);
 
 	function isActiveProfile(id: string) {
 		const profileId = page.url.searchParams.get('profile') ?? '';
 		return (profileId === '' && id === '0') || profileId === id;
 	}
 
-	let testers = liveQuery(() => db.speedTester.where('id').notEqual('0').sortBy('createTime'));
+	// Get testers and sort by order, then by createTime
+	let testers = liveQuery(async () => {
+		const allTesters = await db.speedTester.where('id').notEqual('0').toArray();
+		return allTesters.sort((a, b) => {
+			const orderA = a.order ?? Number.MAX_SAFE_INTEGER;
+			const orderB = b.order ?? Number.MAX_SAFE_INTEGER;
+			if (orderA !== orderB) return orderA - orderB;
+			return a.createTime.getTime() - b.createTime.getTime();
+		});
+	});
 
 	const addProfile = async () => {
 		try {
+			// Get the current max order to place new profile at the end
+			const allTesters = await db.speedTester.where('id').notEqual('0').toArray();
+			const maxOrder = allTesters.reduce((max, t) => {
+				const order = t.order ?? -1;
+				return Math.max(max, order);
+			}, -1);
+			
 			const id = await db.speedTester.add({
 				id: uuidv4(),
 				name: 'New Tester',
@@ -55,7 +70,8 @@
 				amount: 10,
 				createTime: new Date(),
 				updateTime: new Date(),
-				recordUpdateTime: new Date()
+				recordUpdateTime: new Date(),
+				order: maxOrder + 1
 			});
 
 			await goto(`${base}?profile=${id}`);
@@ -206,8 +222,14 @@
 				<MoonIcon class="hidden h-[1.2rem] w-[1.2rem] dark:block" />
 				<span class="">Toggle theme</span>
 			</DropdownMenu.Item>
+			<Separator />
+			<DropdownMenu.Item class="cursor-pointer" onclick={() => (reorderDialogOpen = true)}>
+				<ArrowUpDown class="h-[1.2rem] w-[1.2rem]" />
+				<span>Reorder Profiles</span>
+			</DropdownMenu.Item>
 		</DropdownMenu.Content>
 	</DropdownMenu.Root>
+	<ReorderProfilesDialog bind:open={reorderDialogOpen} testers={$testers ?? []} />
 {/snippet}
 <div
 	class="bg-sidebar text-sidebar-foreground m-0 flex h-full w-56 min-w-56 flex-col justify-between overflow-hidden"
